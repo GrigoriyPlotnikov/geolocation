@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\plotnikovg\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\plotnikovg\\.nuget\\packages"
+    ]
+  }
+}
