@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GeoData.DbModel
 {
-    public class IpRange
+    public struct IpRange
     {
         public uint ip_from;           // начало диапазона IP адресов
         public uint ip_to;             // конец диапазона IP адресов

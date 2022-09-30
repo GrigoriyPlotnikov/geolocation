@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GeoData.DbModel
 {
-    public class Location
+    public struct Location
     {
         public string country;        // название страны (случайная строка с префиксом "cou_")
         public string region;        // название области (случайная строка с префиксом "reg_")

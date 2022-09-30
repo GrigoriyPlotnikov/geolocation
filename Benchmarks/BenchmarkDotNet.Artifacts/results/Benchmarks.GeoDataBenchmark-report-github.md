@@ -8,9 +8,6 @@ Intel Core i3-6006U CPU 2.00GHz (Skylake), 1 CPU, 4 logical and 2 physical cores
 
 
 ```
-|       Method | Mean | Error |
-|------------- |-----:|------:|
-| ReadDatabase |   NA |    NA |
-
-Benchmarks with issues:
-  GeoDataBenchmark.ReadDatabase: DefaultJob
+|       Method |     Mean |    Error |   StdDev | Allocated |
+|------------- |---------:|---------:|---------:|----------:|
+| ReadDatabase | 92.29 ms | 3.410 ms | 10.05 ms |  45.01 MB |
