@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace GeoData.DbModel
 {
-    public struct IpRange
+    [StructLayout(LayoutKind.Explicit)]
+    public unsafe struct IpRange
     {
+        [FieldOffset(0)]
         public uint ip_from;           // начало диапазона IP адресов
+        [FieldOffset(4)]
         public uint ip_to;             // конец диапазона IP адресов
+        [FieldOffset(8)]
         public uint location_index;    // индекс записи о местоположении
     }
 }
