@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GeoData.DbHelpers;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace UnitTests
 {
@@ -9,41 +10,41 @@ namespace UnitTests
     {
 
         [TestMethod]
-        public void BinaryStepUp()
-        {
-            int min = 0;
-            int position = 10;
-            int max = 20;
-            BinarySearch.BinaryStepUp(max, ref position, ref min);
-            Assert.AreEqual(15, position);
-            Assert.AreEqual(10, min);
-
-            BinarySearch.BinaryStepUp(max, ref position, ref min);
-            Assert.AreEqual(17, position);
-            Assert.AreEqual(15, min);
-        }
-
-        [TestMethod]
-        public void BinaryStepDown()
-        {
-            int min = 0;
-            int position = 10;
-            int max = 20;
-            BinarySearch.BinaryStepDown(ref max, ref position, min);
-            Assert.AreEqual(5, position);
-            Assert.AreEqual(10, max);
-
-            BinarySearch.BinaryStepDown(ref max, ref position, min);
-            Assert.AreEqual(3, position);
-            Assert.AreEqual(5, max);
-        }
-
-        [TestMethod]
         public void BinarySearchMany()
         {
             int[] data = { 1, 2, 3, 3, 4, 5 };
-            var res = BinarySearch.SearchMany(3, (index, needle) => needle.CompareTo(data[index]), data.Length);
+
+            bool found = false;
+            List<int> res = new List<int>();
+            int position = BinarySearch.SearchLeftmost<int>(3, (index, needle) => needle.CompareTo(data[index]), data.Length);
+            do
+            {
+                found = 3.CompareTo(data[position]) == 0;
+                if (found)
+                {
+                    res.Add(data[position]);
+                    position++;
+                }
+            }
+            while (position < data.Length && found);
             Assert.AreEqual(2, res.Count());
+        }
+
+        [TestMethod]
+        public void BinarySearchOne()
+        {
+            int[] data = { 1, 2, 3, 3, 4, 5 };
+            var res = BinarySearch.Search(3, (index, needle) => needle.CompareTo(data[index]), data.Length);
+            Assert.IsNotNull(res);
+
+            res = BinarySearch.Search(1, (index, needle) => needle.CompareTo(data[index]), data.Length);
+            Assert.IsNotNull(res);
+
+            res = BinarySearch.Search(5, (index, needle) => needle.CompareTo(data[index]), data.Length);
+            Assert.IsNotNull(res);
+
+            res = BinarySearch.Search(8, (index, needle) => needle.CompareTo(data[index]), data.Length);
+            Assert.IsNull(res);
         }
     }
 }

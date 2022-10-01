@@ -17,10 +17,10 @@ namespace UnitTests
         [TestMethod]
         public void SelfTest()
         {
-            database.SelfTest();
-            Assert.IsNotNull(database.FirstDuplicate());
-
             Assert.AreEqual("Geo.IP", database.Name);
+
+            database.ConsistencyCheck();
+            Assert.IsNotNull(database.FirstDuplicate());
         }
 
         [TestMethod]

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GeoData.DbModel;
 using System.Runtime.InteropServices;
 using System.Buffers;
+using System.Net;
 
 namespace GeoData
 {
@@ -66,9 +67,21 @@ namespace GeoData
 
         public string Name { get { return header.Name; } }
 
-        public Location GetLocationByIP(string ipStr)
+        public Location? GetLocationByIP(string ipStr)
         {
-            return default;
+            var ipBytes = IPAddress.Parse(ipStr).GetAddressBytes();
+
+            var pos = DbHelpers.BinarySearch.Search<byte[]>(ipBytes, CompareIpAddess, ips.Length);
+
+            if (pos == null)
+                return null;
+
+            return locations[(int)ips[pos.Value].location_index];
+        }
+
+        private int CompareIpAddess(int position, byte[] ipBytes)
+        {
+            return ips[position].CompareAddress(ipBytes);
         }
 
         public void ConsistencyCheck()
@@ -97,15 +110,25 @@ namespace GeoData
             return null;
         }
 
-        private int Compare(int position, string needle)
+        private int CompareCityNames(int position, string needle)
         {
             return locations[indexes_sorted[position]].CompareCity(needle);
         }
 
         public IEnumerable<Location> GetCityLocations(string city)
         {
-            foreach (var position in DbHelpers.BinarySearch.SearchMany<string>(city, Compare, indexes_sorted.Length))
-                yield return locations[indexes_sorted[position]];
+            bool found = false;
+            int position = DbHelpers.BinarySearch.SearchLeftmost<string>(city, CompareCityNames, indexes_sorted.Length);
+            do
+            {
+                found = position < indexes_sorted.Length && CompareCityNames(position, city) == 0;
+                if (found)
+                {
+                    yield return locations[indexes_sorted[position]];
+                    position++;
+                }
+            }
+            while (found);
         }
     }
 }
