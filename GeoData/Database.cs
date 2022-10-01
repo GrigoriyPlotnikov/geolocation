@@ -41,11 +41,14 @@ namespace GeoData
             locations = MemoryMarshal.Cast<byte, Location>(locBytes).ToArray();
 
             Span<byte> indexBytes = bytes.AsSpan((int)header.offset_cities);
-            indexes_sorted = MemoryMarshal.Cast<byte, int>(indexBytes).ToArray();
-
-            //in file stored offsets , not indexes, lets fix that
-            for (int i = 0; i < indexes_sorted.Length; i++)
-                indexes_sorted[i] /= sizeof(Location);
+            indexes_sorted = new int[header.records];
+            fixed(int* p = MemoryMarshal.Cast<byte, int>(indexBytes))
+            {
+                for (int i =0; i< indexes_sorted.Length; i++)
+                {
+                    indexes_sorted[i] = p[i] / sizeof(Location);
+                }
+            }
         }
 
         public string Name { get { return header.Name; } }
