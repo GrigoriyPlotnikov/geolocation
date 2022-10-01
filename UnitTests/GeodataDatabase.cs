@@ -20,7 +20,6 @@ namespace UnitTests
             Assert.AreEqual("Geo.IP", database.Name);
 
             database.ConsistencyCheck();
-            Assert.IsNotNull(database.FirstDuplicate());
         }
 
         [TestMethod]
@@ -48,10 +47,14 @@ namespace UnitTests
             Assert.IsFalse(locs.Any());
         }
 
+        [TestMethod]
         public void GetLocationByIpSuccess()
         {
-            var location = database.GetLocationByIP("123.234.123.234");
-            Assert.IsNotNull(location);
+            //empty test ?
+            Assert.IsNull(database.GetLocationByIP("123.234.123.234"));
+
+            //
+            Assert.IsNotNull(database.GetLocationByIP("116.226.107.115"));
         }
     }
 }
