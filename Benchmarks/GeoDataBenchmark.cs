@@ -16,23 +16,10 @@ namespace Benchmarks
     [MemoryDiagnoser(false)]
     public class GeoDataBenchmark
     {
-        public void ReadFileByteByByte()
-        {
-            using (var fileStream = System.IO.File.OpenRead("geobase.dat"))
-            {
-                while (fileStream.ReadByte() >= 0)
-                    ;
-            }
-        }
-
+        [Benchmark(Baseline =true)]
         public void ReadFileBytes()
         {
             var q = System.IO.File.ReadAllBytes("geobase.dat");
-        }
-
-        public void ReadFileText()
-        {
-            var q = System.IO.File.ReadAllText("geobase.dat");
         }
 
         [Benchmark]

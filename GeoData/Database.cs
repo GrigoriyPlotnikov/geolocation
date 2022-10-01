@@ -22,40 +22,33 @@ namespace GeoData
 
         public unsafe Database(string file)
         {
-            using (var fs = System.IO.File.OpenRead("geobase.dat"))
-            {
-                {
-                    Span<byte> headerBytes = stackalloc byte[sizeof(Header)];
-                    fs.Read(headerBytes);
-                    header = MemoryMarshal.AsRef<Header>(headerBytes);
-                }
+            var bytes = System.IO.File.ReadAllBytes("geobase.dat");
+            
+            Span<byte> headerBytes = bytes.AsSpan(0, sizeof(Header));
+            header = MemoryMarshal.AsRef<Header>(headerBytes);
 
-                ips = new IpRange[header.records];
-                Span<byte> ipRangeBytes = stackalloc byte[sizeof(IpRange)];
-                for (int i = 0; i < header.records; i++)
-                {
-                    fs.Read(ipRangeBytes);
-                    ips[i] = MemoryMarshal.AsRef<IpRange>(ipRangeBytes);
-                }
+            Span<byte> ipRangeBytes = bytes.AsSpan(
+                start: (int) header.offset_ranges, 
+                length: (int) (header.offset_locations - header.offset_ranges)
+                );
+            ips = MemoryMarshal.Cast<byte, IpRange>(ipRangeBytes).ToArray();
 
-                locations = new Location[header.records];
-                Span<byte> locBytes = stackalloc byte[sizeof(Location)];
-                for (int i = 0; i < header.records; i++)
-                {
-                    fs.Read(locBytes);
-                    locations[i] = MemoryMarshal.AsRef<Location>(locBytes);
-                }
+            //locations = new Location[header.records];
+            Span<byte> locBytes = bytes.AsSpan(
+                start: (int)header.offset_locations,
+                length: (int)(header.offset_cities - header.offset_locations)
+                );
+            locations = MemoryMarshal.Cast<byte, Location>(locBytes).ToArray();
 
-                indexes_sorted = new int[header.records];
-                Span<byte> indexBytes = stackalloc byte[sizeof(int) * header.records];
-                fs.Read(indexBytes);
-                for (int i = 0; i < header.records; i++)
-                {
-                    indexes_sorted[i] = MemoryMarshal.AsRef<int>(indexBytes) / 96;
-                    indexBytes = indexBytes.Slice(sizeof(int));
-                }
-            }
+            Span<byte> indexBytes = bytes.AsSpan((int)header.offset_cities);
+            indexes_sorted = MemoryMarshal.Cast<byte, int>(indexBytes).ToArray();
+
+            //in file stored offsets , not indexes, lets fix that
+            for (int i = 0; i < indexes_sorted.Length; i++)
+                indexes_sorted[i] /= sizeof(Location);
         }
+
+        public string Name { get { return header.Name; } }
 
         public Location GetLocationByIP(string ipStr)
         {
@@ -94,50 +87,15 @@ namespace GeoData
             return null;
         }
 
+        private int Compare(int position, string needle)
+        {
+            return String.Compare(locations[indexes_sorted[position]].City, needle);
+        }
+
         public IEnumerable<Location> GetCityLocations(string city)
         {
-            int max = header.records;
-            int position = header.records / 2;
-            int min = 0;
-
-            //maxlength constrain iterations
-            int maxlength = header.records;
-            while (maxlength > 0)
-            {
-                maxlength--;
-
-                var index = indexes_sorted[position];
-                if (String.Compare(locations[index].City, city) == 0)
-                {
-                    //we get to a point that fits, but we need to move to top of the list of fitting entries.
-                    if (index > 0 && String.Compare(locations[indexes_sorted[position-1]].City, city) == 0)
-                    {
-                        max = position;
-                        //todo: consder smaller step
-                        position -= (position - min) / 2;
-                        continue;
-                    }
-                    //we get to top of list lets return all the cities
-                    while (position < header.records && String.Compare(locations[indexes_sorted[position]].City, city) == 0)
-                    {
-                        yield return locations[indexes_sorted[position]];
-                        position++;
-                    }
-                    //all cities are returned stop the enumeration
-                    break;
-                }
-                else if (String.Compare(locations[index].City, city) > 0) 
-                {
-                    max = position;
-                    position -= (position - min) / 2;
-                    continue;
-                }
-                else
-                {
-                    min = position;
-                    position += (max - position) / 2;
-                }
-            }
+            foreach (var position in DbHelpers.BinarySearch.SearchMany<string>(city, Compare, indexes_sorted.Length))
+                yield return locations[indexes_sorted[position]];
         }
     }
 }

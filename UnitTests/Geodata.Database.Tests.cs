@@ -18,7 +18,9 @@ namespace UnitTests
         public void SelfTest()
         {
             database.SelfTest();
-            var q = database.FirstDuplicate();
+            Assert.IsNotNull(database.FirstDuplicate());
+
+            Assert.AreEqual("Geo.IP", database.Name);
         }
 
         [TestMethod]

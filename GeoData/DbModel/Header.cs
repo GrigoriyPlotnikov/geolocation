@@ -27,7 +27,12 @@ namespace GeoData.DbModel
             {
                 fixed (sbyte* namePtr = name)
                 {
-                    return new string((char*)namePtr);
+                    int len = 32;
+                    for (int i = 0; i < len; i++)
+                        if (namePtr[i] == 0x0)
+                            len = i;
+
+                    return new string(namePtr, 0, len, Encoding.ASCII);
                 }
             }
         }
