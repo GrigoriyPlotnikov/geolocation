@@ -89,7 +89,7 @@ namespace GeoData
 
         private int Compare(int position, string needle)
         {
-            return String.Compare(locations[indexes_sorted[position]].City, needle);
+            return locations[indexes_sorted[position]].CompareCity(needle);
         }
 
         public IEnumerable<Location> GetCityLocations(string city)

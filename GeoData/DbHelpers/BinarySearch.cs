@@ -66,11 +66,11 @@ namespace GeoData.DbHelpers
                 }
                 else if (res > 0)
                 {
-                    DbHelpers.BinarySearch.BinaryStepDown(ref max, ref position, min);
+                    DbHelpers.BinarySearch.BinaryStepUp(max, ref position, ref min);
                     continue;
                 }
                 else
-                    DbHelpers.BinarySearch.BinaryStepUp(max, ref position, ref min);
+                    DbHelpers.BinarySearch.BinaryStepDown(ref max, ref position, min);
             }
         }
     }

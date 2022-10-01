@@ -4,7 +4,7 @@ using System.Linq;
 namespace UnitTests
 {
     [TestClass]
-    public class Geodata
+    public class GeodataDatabase
     {
         GeoData.Database database;
 
@@ -24,37 +24,31 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void TestGetLocationsSuccess()
+        public void GetLocationsSuccess()
         {
             var locs = database.GetCityLocations("cit_Uwol Z Hyt Xavi");
             Assert.IsTrue(locs.Any());
         }
 
         [TestMethod]
-        public void TestGetSeveralLocations()
+        public void GetSeveralLocations()
         {
             var locs = database.GetCityLocations("cit_Uqoced");
             Assert.IsTrue(locs.Count() > 1);
         }
 
         [TestMethod]
-        public void TestMissingLocation()
+        public void MissingLocation()
         {
             var locs = database.GetCityLocations("noting");
             Assert.IsFalse(locs.Any());
-        }
 
-        /// <summary>
-        /// the specific sample from docs. worth checking but empty set
-        /// </summary>
-        [TestMethod]
-        public void TestGetLocationsSuccessSpecific()
-        {
-            var locs = database.GetCityLocations("cit_Gbqw4");
+            //the specific sample from docs. worth checking but empty set
+            locs = database.GetCityLocations("cit_Gbqw4");
             Assert.IsFalse(locs.Any());
         }
 
-        public void TestGetLocationSuccess()
+        public void GetLocationByIpSuccess()
         {
             var location = database.GetLocationByIP("123.234.123.234");
             Assert.IsNotNull(location);

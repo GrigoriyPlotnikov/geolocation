@@ -42,7 +42,7 @@ namespace UnitTests
         public void BinarySearchMany()
         {
             int[] data = { 1, 2, 3, 3, 4, 5 };
-            var res = BinarySearch.SearchMany(3, (index, needle) => data[index].CompareTo(needle), data.Length);
+            var res = BinarySearch.SearchMany(3, (index, needle) => needle.CompareTo(data[index]), data.Length);
             Assert.AreEqual(2, res.Count());
         }
     }

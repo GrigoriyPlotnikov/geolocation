@@ -35,6 +35,50 @@ namespace GeoData.DbModel
                     return new string(namePtr, 0, len, Encoding.ASCII);
                 }
             }
+
+            set
+            {
+                fixed (sbyte* namePtr = city)
+                {
+                    
+                    for (int i = 0; i < 24; i ++)
+                    {
+                        if (value.Length > i)
+                            namePtr[i] = (sbyte)value[i];
+                        else
+                            namePtr[i] = 0x0;
+                    }
+                }
+            }
+        }
+
+        public int CompareCity(string needle)
+        {
+            if (needle == null)
+                return -1;
+
+            fixed (sbyte* namePtr = city)
+            {
+                int len = 24;
+                for (int i = 0; i < len; i++)
+                {
+                    char current = (char)namePtr[i];
+                    if (current == 0x0) //the line is over
+                    {
+                        //both lines are over
+                        if (needle.Length <= i || needle[i] == 0x0) 
+                            return 0;
+                        else 
+                            return 1; //the city name is shorter after accounting zero bytes
+                    }
+
+                    var res = needle[i].CompareTo(current);
+                    if (res != 0)
+                        return res;
+                }
+            }
+
+            return 0;
         }
     }
 }
