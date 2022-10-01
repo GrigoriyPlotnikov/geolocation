@@ -11,43 +11,56 @@ namespace GeoData
 {
     public class Database
     {
+        private readonly byte[] bytes;
+
         private readonly Header header;
 
-        private readonly IpRange[] ips;
+        private ReadOnlySpan<IpRange> ips
+        {
+            get
+            {
+                Span<byte> ipRangeBytes = bytes.AsSpan(
+                    start: (int)header.offset_ranges,
+                    length: (int)(header.offset_locations - header.offset_ranges)
+                    );
+                return MemoryMarshal.Cast<byte, IpRange>(ipRangeBytes).ToArray();
+            }
+        }
 
-        private readonly Location[] locations;
+        private ReadOnlySpan<Location> locations
+        {
+            get
+            {
+                Span<byte> locBytes = bytes.AsSpan(
+                    start: (int)header.offset_locations,
+                    length: (int)(header.offset_cities - header.offset_locations)
+                    );
+                return MemoryMarshal.Cast<byte, Location>(locBytes);
+            }
+        }
 
-        private readonly int[] indexes_sorted;
+        private ReadOnlySpan<int> indexes_sorted
+        {
+            get
+            {
+                Span<byte> indexBytes = bytes.AsSpan((int)header.offset_cities);
+                return MemoryMarshal.Cast<byte, int>(indexBytes);
+            }
+        }
 
 
         public unsafe Database(string file)
         {
-            var bytes = System.IO.File.ReadAllBytes("geobase.dat");
-            
+            bytes = System.IO.File.ReadAllBytes("geobase.dat");
+
             Span<byte> headerBytes = bytes.AsSpan(0, sizeof(Header));
             header = MemoryMarshal.AsRef<Header>(headerBytes);
 
-            Span<byte> ipRangeBytes = bytes.AsSpan(
-                start: (int) header.offset_ranges, 
-                length: (int) (header.offset_locations - header.offset_ranges)
-                );
-            ips = MemoryMarshal.Cast<byte, IpRange>(ipRangeBytes).ToArray();
-
-            //locations = new Location[header.records];
-            Span<byte> locBytes = bytes.AsSpan(
-                start: (int)header.offset_locations,
-                length: (int)(header.offset_cities - header.offset_locations)
-                );
-            locations = MemoryMarshal.Cast<byte, Location>(locBytes).ToArray();
-
             Span<byte> indexBytes = bytes.AsSpan((int)header.offset_cities);
-            indexes_sorted = new int[header.records];
-            fixed(int* p = MemoryMarshal.Cast<byte, int>(indexBytes))
+            fixed (int* p = MemoryMarshal.Cast<byte, int>(indexBytes))
             {
-                for (int i =0; i< indexes_sorted.Length; i++)
-                {
-                    indexes_sorted[i] = p[i] / sizeof(Location);
-                }
+                for (int i = 0; i < indexes_sorted.Length; i++)
+                    p[i] = p[i] / sizeof(Location);
             }
         }
 
@@ -58,17 +71,11 @@ namespace GeoData
             return default;
         }
 
-        /// <summary>
-        /// checks consistensy of the database
-        /// each ip range.location_index points at valid existing locations
-        /// each city index points at proper city
-        /// </summary>
-        /// <param name="v"></param>
-        public void SelfTest()
+        public void ConsistencyCheck()
         {
             foreach (var range in ips)
             {
-                var location = locations[range.location_index];
+                var location = locations[(int)range.location_index];
             }
 
             foreach (var index in indexes_sorted)

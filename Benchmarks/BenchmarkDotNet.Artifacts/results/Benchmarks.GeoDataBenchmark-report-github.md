@@ -8,7 +8,7 @@ Intel Core i3-6006U CPU 2.00GHz (Skylake), 1 CPU, 4 logical and 2 physical cores
 
 
 ```
-|        Method |      Mean |     Error |    StdDev | Ratio | RatioSD | Allocated | Alloc Ratio |
-|-------------- |----------:|----------:|----------:|------:|--------:|----------:|------------:|
-| ReadFileBytes |  5.927 ms | 0.1174 ms | 0.3051 ms |  1.00 |    0.00 |  10.68 MB |        1.00 |
-|  ReadDatabase | 12.615 ms | 0.4651 ms | 1.3714 ms |  2.08 |    0.25 |  21.36 MB |        2.00 |
+|        Method |     Mean |     Error |    StdDev | Ratio | RatioSD | Allocated | Alloc Ratio |
+|-------------- |---------:|----------:|----------:|------:|--------:|----------:|------------:|
+| ReadFileBytes | 5.924 ms | 0.1156 ms | 0.2656 ms |  1.00 |    0.00 |  10.68 MB |        1.00 |
+|  ReadDatabase | 6.700 ms | 0.1745 ms | 0.5118 ms |  1.12 |    0.10 |  10.68 MB |        1.00 |
