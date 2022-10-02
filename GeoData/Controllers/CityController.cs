@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GeoData.Contracts;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,9 +9,9 @@ namespace GeoData.Controllers
     [ApiController]
     public class CityController : ControllerBase
     {
-        private Db.GeoIp db;
+        private IGeoIp db;
 
-        public CityController(Db.GeoIp db)
+        public CityController(IGeoIp db)
         {
             this.db = db;
         }
@@ -18,7 +19,7 @@ namespace GeoData.Controllers
         // GET: city/locations
         [Route("locations")]
         [HttpGet]
-        public IEnumerable<Db.Model.Location> GetLocation(string city)
+        public IEnumerable<ILocation> GetLocation(string city)
         {
             return db.GetCityLocations(city);
         }

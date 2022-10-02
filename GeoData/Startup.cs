@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using GeoData.Contracts;
 using GeoData.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,8 +43,8 @@ namespace GeoData
 
                 services
                 .AddOptions()
-                //.Configure<DbSettings>(hostContext.Configuration.GetSection($"AppSettings:{typeof(DbSettings).FullName}"))
-                .AddSingleton<Db.GeoIp>()
+                .Configure<DbSettings>(Configuration.GetSection($"AppSettings:DbSettings"))
+                .AddSingleton<IGeoIp, Db.GeoIp>()
                 .AddSwaggerGen()
                 .AddMvcCore()
                 .AddApiExplorer();

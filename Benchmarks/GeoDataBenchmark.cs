@@ -1,4 +1,10 @@
 using BenchmarkDotNet.Attributes;
+using GeoData.Contracts;
+using GeoData.Settings;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
+using Moq;
 
 namespace Benchmarks
 {
@@ -16,6 +22,24 @@ namespace Benchmarks
     [MemoryDiagnoser(false)]
     public class GeoDataBenchmark
     {
+        private ILogger<IGeoIp> logger;
+        private Mock<IOptions<DbSettings>> databaseSettingsMock;
+
+        [GlobalSetup]
+        public void Init()
+        {
+            var f = new NullLoggerFactory();
+            logger = f.CreateLogger<IGeoIp>();
+            databaseSettingsMock = new Mock<IOptions<DbSettings>>();
+
+            databaseSettingsMock
+                .Setup(x => x.Value)
+                .Returns(new DbSettings
+                {
+                    GeoIpPath = "geobase.dat",
+                });
+        }
+
         [Benchmark(Baseline =true)]
         public void ReadFileBytes()
         {
@@ -25,7 +49,7 @@ namespace Benchmarks
         [Benchmark]
         public void ReadDatabase()
         {
-            var q = new GeoData.Db.GeoIp();
+            var q = new GeoData.Db.GeoIp(databaseSettingsMock.Object, logger);
         }
     }
 }

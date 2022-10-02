@@ -4,10 +4,12 @@ using GeoData.Db.Model;
 using System.Runtime.InteropServices;
 using GeoData.Db.Helpers;
 using Microsoft.Extensions.Options;
+using GeoData.Contracts;
+using Microsoft.Extensions.Logging;
 
 namespace GeoData.Db
 {
-    public class GeoIp
+    public class GeoIp : IGeoIp
     {
         private readonly byte[] _bytes;
 
@@ -46,8 +48,9 @@ namespace GeoData.Db
             }
         }
 
-        public unsafe GeoIp(IOptions<Settings.DbSettings> settings)
+        public unsafe GeoIp(IOptions<Settings.DbSettings> settings, ILogger<IGeoIp> logger)
         {
+            logger.LogInformation(settings.Value.ToString());
             _bytes = System.IO.File.ReadAllBytes(settings.Value.GeoIpPath);
 
             Span<byte> headerBytes = _bytes.AsSpan(0, sizeof(Header));
@@ -63,7 +66,7 @@ namespace GeoData.Db
 
         public string Name { get { return header.Name; } }
 
-        public Location? GetLocationByIP(string ipStr)
+        public ILocation GetLocationByIP(string ipStr)
         {
             var ipUint = IpAddress.GetAddress(ipStr);
 
@@ -101,7 +104,7 @@ namespace GeoData.Db
             return locations[indexes_sorted[position]].CompareCity(needle);
         }
 
-        public IEnumerable<Location> GetCityLocations(string city)
+        public IEnumerable<ILocation> GetCityLocations(string city)
         {
             foreach (var position in BinarySearch.SearchMany<string>(city, CompareCityNames, indexes_sorted.Length))
                 yield return locations[indexes_sorted[position]];

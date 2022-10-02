@@ -1,10 +1,11 @@
-﻿using System.Runtime.InteropServices;
+﻿using GeoData.Contracts;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace GeoData.Db.Model
 {
     [StructLayout(LayoutKind.Explicit)]
-    public unsafe struct Location
+    public unsafe struct Location : ILocation
     {
         [FieldOffset(0)]
         public fixed sbyte country[8];        // название страны (случайная строка с префиксом "cou_")

@@ -1,17 +1,35 @@
+using GeoData.Contracts;
+using GeoData.Settings;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System.Linq;
+using UnitTests.Mock;
 
 namespace UnitTests.GeoDataDb
 {
     [TestClass]
     public class GeoIpTests
     {
+        private LoggerMock<IGeoIp> loggerMock;
+        private Mock<IOptions<DbSettings>> databaseSettingsMock;
+
         GeoData.Db.GeoIp database;
 
         [TestInitialize]
-        public void LoadDatabase()
+        public void Initialize()
         {
-            database = new GeoData.Db.GeoIp();
+            loggerMock = new LoggerMock<IGeoIp>();
+            databaseSettingsMock = new Mock<IOptions<DbSettings>>();
+
+            databaseSettingsMock
+                .Setup(x => x.Value)
+                .Returns(new DbSettings
+                {
+                    GeoIpPath = "geobase.dat",
+                });
+
+            database = new GeoData.Db.GeoIp(databaseSettingsMock.Object, loggerMock);
         }
 
         [TestMethod]
