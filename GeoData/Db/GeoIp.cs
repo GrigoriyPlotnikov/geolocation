@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoData.DbModel;
+using GeoData.Db.Model;
 using System.Runtime.InteropServices;
-using GeoData.DbHelpers;
+using GeoData.Db.Helpers;
+using Microsoft.Extensions.Options;
 
-namespace GeoData
+namespace GeoData.Db
 {
-    public class Database
+    public class GeoIp
     {
         private readonly byte[] _bytes;
 
@@ -45,9 +46,9 @@ namespace GeoData
             }
         }
 
-        public unsafe Database(string file)
+        public unsafe GeoIp(IOptions<Settings.DbSettings> settings)
         {
-            _bytes = System.IO.File.ReadAllBytes("geobase.dat");
+            _bytes = System.IO.File.ReadAllBytes(settings.Value.GeoIpPath);
 
             Span<byte> headerBytes = _bytes.AsSpan(0, sizeof(Header));
             header = MemoryMarshal.AsRef<Header>(headerBytes);
@@ -102,7 +103,7 @@ namespace GeoData
 
         public IEnumerable<Location> GetCityLocations(string city)
         {
-            foreach (var position in DbHelpers.BinarySearch.SearchMany<string>(city, CompareCityNames, indexes_sorted.Length))
+            foreach (var position in BinarySearch.SearchMany<string>(city, CompareCityNames, indexes_sorted.Length))
                 yield return locations[indexes_sorted[position]];
         }
     }

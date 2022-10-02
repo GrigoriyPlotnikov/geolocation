@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace GeoData.DbHelpers
+namespace GeoData.Db.Helpers
 {
     public static class IpAddress
     {

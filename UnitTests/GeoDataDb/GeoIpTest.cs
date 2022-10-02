@@ -1,17 +1,17 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
-namespace UnitTests
+namespace UnitTests.GeoDataDb
 {
     [TestClass]
-    public class GeodataDatabase
+    public class GeoIpTests
     {
-        GeoData.Database database;
+        GeoData.Db.GeoIp database;
 
         [TestInitialize]
         public void LoadDatabase()
         {
-            database = new GeoData.Database("geobase.dat");
+            database = new GeoData.Db.GeoIp();
         }
 
         [TestMethod]

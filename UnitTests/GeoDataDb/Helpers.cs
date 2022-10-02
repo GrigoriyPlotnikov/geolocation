@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GeoData.DbHelpers;
+using GeoData.Db.Helpers;
 using System.Linq;
 using System.Collections.Generic;
 using System;
 
-namespace UnitTests
+namespace UnitTests.GeoDataDb
 {
     [TestClass]
-    public class Helpers
+    public class HelpersTests
     {
 
         [TestMethod]

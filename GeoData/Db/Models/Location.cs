@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
 
-namespace GeoData.DbModel
+namespace GeoData.Db.Model
 {
     [StructLayout(LayoutKind.Explicit)]
     public unsafe struct Location
