@@ -43,13 +43,13 @@ namespace Benchmarks
         [Benchmark(Baseline =true)]
         public void ReadFileBytes()
         {
-            var q = System.IO.File.ReadAllBytes("geobase.dat");
+            System.IO.File.ReadAllBytes("geobase.dat");
         }
 
         [Benchmark]
         public void ReadDatabase()
         {
-            var q = new GeoData.Db.GeoIp(databaseSettingsMock.Object, logger);
+            new GeoData.Db.GeoIp(databaseSettingsMock.Object, logger);
         }
     }
 }

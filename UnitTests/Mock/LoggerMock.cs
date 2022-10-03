@@ -55,14 +55,12 @@ namespace UnitTests.Mock
             this.Object.Log<TState>(logLevel, eventId, state, exception, formatter);
         }
 
-        public void VerifyLog(LogLevel logLevel, Func<string?, bool> messageMatch, int? times = null, Func<Exception, bool>? exceptionMatch = null, string? failMessage = null)
+        public void VerifyLog(LogLevel logLevel, Func<string, bool> messageMatch, int? times = null, Func<Exception, bool> exceptionMatch = null, string failMessage = null)
         {
             var count = this.Messages
                 .Where(x => x.Level == logLevel)
                 .AsQueryable()
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 .WhereIf(exceptionMatch != null, x => x.Exception != null && exceptionMatch(x.Exception))
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 .Select(x => x.Message)
                 .Count(messageMatch);
 
@@ -74,11 +72,11 @@ namespace UnitTests.Mock
 
         public class LoggedMessage
         {
-            public string? Message { get; set; }
+            public string Message { get; set; }
 
             public LogLevel Level { get; set; }
 
-            public Exception? Exception { get; set; }
+            public Exception Exception { get; set; }
         }
     }
 

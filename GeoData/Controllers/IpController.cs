@@ -10,7 +10,7 @@ namespace GeoData.Controllers
     [ApiController]
     public class IpController : ControllerBase
     {
-        private IGeoIp db;
+        private readonly IGeoIp db;
 
         public IpController(IGeoIp db)
         {

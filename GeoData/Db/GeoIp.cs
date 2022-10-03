@@ -15,7 +15,7 @@ namespace GeoData.Db
 
         private readonly Header header;
 
-        private ReadOnlySpan<IpRange> ips
+        private ReadOnlySpan<IpRange> IpAddresses
         {
             get
             {
@@ -27,7 +27,7 @@ namespace GeoData.Db
             }
         }
 
-        private ReadOnlySpan<Location> locations
+        private ReadOnlySpan<Location> Locations
         {
             get
             {
@@ -39,7 +39,7 @@ namespace GeoData.Db
             }
         }
 
-        private ReadOnlySpan<int> indexes_sorted
+        private ReadOnlySpan<int> IndexesCity
         {
             get
             {
@@ -59,7 +59,7 @@ namespace GeoData.Db
             Span<byte> indexBytes = _bytes.AsSpan((int)header.offset_cities);
             fixed (int* p = MemoryMarshal.Cast<byte, int>(indexBytes))
             {
-                for (int i = 0; i < indexes_sorted.Length; i++)
+                for (int i = 0; i < IndexesCity.Length; i++)
                     p[i] = p[i] / sizeof(Location);
             }
         }
@@ -73,41 +73,42 @@ namespace GeoData.Db
             if (ipUint == null)
                 return null;
 
-            var pos = BinarySearch.Search<uint>(ipUint.Value, CompareIpAddess, ips.Length);
+            var pos = BinarySearch.Search<uint>(ipUint.Value, CompareIpAddess, IpAddresses.Length);
 
             if (pos == null)
                 return null;
 
-            return locations[(int)ips[pos.Value].location_index];
+            return Locations[(int)IpAddresses[pos.Value].location_index];
         }
 
         private int CompareIpAddess(int position, uint needle)
         {
-            return ips[position].CompareAddress(needle);
+            return IpAddresses[position].CompareAddress(needle);
         }
 
         public void ConsistencyCheck()
         {
-            foreach (var range in ips)
+            foreach (var range in IpAddresses)
             {
-                var location = locations[(int)range.location_index];
+                var index = (int)range.location_index;
+                if (index > 0 && index < Locations.Length) { }
             }
 
-            foreach (var index in indexes_sorted)
+            foreach (var index in IndexesCity)
             {
-                var location = locations[index];
+                if (index > 0 && index < Locations.Length) { }
             }
         }
 
         private int CompareCityNames(int position, string needle)
         {
-            return locations[indexes_sorted[position]].CompareCity(needle);
+            return Locations[IndexesCity[position]].CompareCity(needle);
         }
 
         public IEnumerable<ILocation> GetCityLocations(string city)
         {
-            foreach (var position in BinarySearch.SearchMany<string>(city, CompareCityNames, indexes_sorted.Length))
-                yield return locations[indexes_sorted[position]];
+            foreach (var position in BinarySearch.SearchMany<string>(city, CompareCityNames, IndexesCity.Length))
+                yield return Locations[IndexesCity[position]];
         }
     }
 }

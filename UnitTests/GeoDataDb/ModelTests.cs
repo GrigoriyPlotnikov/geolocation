@@ -9,8 +9,10 @@ namespace UnitTests.GeoDataDb
         [TestMethod]
         public void CompareCity()
         {
-            var location = new Location();
-            location.City = "cit_Kazan";
+            var location = new Location
+            {
+                City = "cit_Kazan"
+            };
 
             Assert.AreEqual(0, location.CompareCity("cit_Kazan"));
 
@@ -20,9 +22,11 @@ namespace UnitTests.GeoDataDb
         [TestMethod]
         public void CompareIpRange()
         {
-            var range = new IpRange();
-            range.ip_from = 1;
-            range.ip_to = 3;
+            var range = new IpRange
+            {
+                ip_from = 1,
+                ip_to = 3
+            };
 
             Assert.AreEqual(0, range.CompareAddress(1));
             Assert.AreEqual(0, range.CompareAddress(2));
