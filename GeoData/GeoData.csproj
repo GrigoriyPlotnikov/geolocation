@@ -17,16 +17,24 @@
     <Content Remove="Configs\nlog.config" />
     <Content Remove="wwwroot\favicon.ico" />
     <Content Remove="wwwroot\index.js" />
+    <Content Remove="wwwroot\screens\home.html" />
+    <Content Remove="wwwroot\screens\locations.html" />
     <Content Remove="wwwroot\style.css" />
-    <Content Remove="wwwroot\views\ip.html" />
-    <Content Remove="wwwroot\views\menu.html" />
+    <Content Remove="wwwroot\screens\ip.html" />
+    <Content Remove="wwwroot\screens\menu.html" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\screens\home.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\screens\locations.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\style.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="wwwroot\js\index.js">
+    <None Include="wwwroot\js\app.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -44,10 +52,10 @@
     <None Include="wwwroot\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="wwwroot\views\ip.html">
+    <None Include="wwwroot\screens\ip.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="wwwroot\views\menu.html">
+    <None Include="wwwroot\templates\controls.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
