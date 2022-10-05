@@ -1,5 +1,5 @@
-﻿///initial code from JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
-// @ts-check
+﻿// @ts-check
+///all credits to JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
 
 import { Observable, Computed } from "./observable.js"
 

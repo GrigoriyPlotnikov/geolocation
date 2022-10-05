@@ -1,4 +1,6 @@
-﻿///all credits to JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
+﻿// @ts-check
+
+// all credits to JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
 
 /**
  * Handles routing for the app

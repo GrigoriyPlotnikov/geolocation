@@ -1,6 +1,7 @@
-﻿///all credits to JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
+﻿// @ts-check
 
-// @ts-check
+//all credits to JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
+
 
 /**
  * Handles animations and transitions

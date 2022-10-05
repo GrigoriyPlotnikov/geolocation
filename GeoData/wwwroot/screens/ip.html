@@ -1,8 +1,34 @@
-﻿<title>Экран поиска гео-информации</title>
+﻿<meta name="controlhead" content="Поиск по IP" />
+<title>Экран поиска гео-информации</title>
 <h1>Экран поиска гео-информации</h1>
 
-<div class="form">
-    <span>IP: </span><input type="text" id="ip" value="123.234.123.234" /><button>Искать</button>
-</div>
+<form>
+  <label>IP: <input type="text" name="ip" placeholder="123.234.123.234"></label><input type="submit" value="Искать" style="margin-left:8px">
+</form>
 
-<div class="result"></div>
+<results></results>
+
+<script>
+  // @ts-check
+const loadIp = function () {
+  fetch(`./ip/location?ip=${document.getElementById('ip').value}`)
+    .then(response => {
+      if (response.ok) {
+        return response.json;
+      }
+      if (res)
+        throw new Error('');
+    })
+    .then(json => {
+      let location = JSON.parse(json);
+      let result = document.getElementById('result');
+      if (Object.keys(location).length === 0)
+        result.innerHTML = 'Местоположение не найдено';
+      else {
+        result.innerHTML = `<div>IP: ${document.getElementById('ip').value}</div>`;
+        result.innerHTML += `<div>City: ${location.city}</div>`;
+      }
+    });
+}
+  
+</script>

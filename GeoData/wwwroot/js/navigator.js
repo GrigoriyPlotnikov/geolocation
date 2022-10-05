@@ -1,10 +1,11 @@
-﻿///initial code from JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
-///revorked to nestle screens 
+﻿// @ts-check
 
-import { loadScreens } from "./loadScreens.js"
-import { Router } from "./router.js"
-import { Animator } from "./animator.js"
-import { Screen } from "./screen.js"
+// initial code from JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
+
+import { loadScreens } from './loadScreens.js'
+import { Router } from './router.js'
+import { Animator } from './animator.js'
+import { Screen } from './screen.js'
 
 /**
  * The main class that handles rendering the screen deck
@@ -32,16 +33,31 @@ export class Navigator extends HTMLElement {
      */
     this._route = this._router.getRoute();
     /**
+     * The previous known route
+     * @type {string}
+     */
+    this._routePrevious = null;
+    /** 
+     *  Known screens
+     *  @type {Object.<string, Screen>}
+     * */
+    this._screens = {};
+    /**
      * Custom event raised when the current screen changes
      * @type {CustomEvent}
      */
-    this.screenChangedEvent = new CustomEvent("screenchanged", {
+    //todo: wtf CustomEvent maybe pass routes screens
+    this.screenChangedEvent = new CustomEvent('screenchanged', {
       bubbles: true,
       cancelable: false
     });
-    this._router.eventSource.addEventListener("routechanged", () => {
+    this.screensLoadedEvent = new CustomEvent('screensloaded', {
+      bubbles: true,
+      cancelable: false
+    });
+    this._router.eventSource.addEventListener('routechanged', () => {
       if (this._route !== this._router.getRoute()) {
-        let route = this._router.getRoute();
+        const route = this._router.getRoute();
         if (route) {
           this.jumpTo(route);
         }
@@ -58,6 +74,7 @@ export class Navigator extends HTMLElement {
       return;
     }
     if (this._screens[route]) {
+      this._routePrevious = this._route;
       this._route = route;
       this.innerHTML = '';
       this.appendChild(this.currentScreen.html);
@@ -65,7 +82,7 @@ export class Navigator extends HTMLElement {
       document.title = `${this.currentScreen.title}`;
       this.dispatchEvent(this.screenChangedEvent);
       if (this._animator.animationReady) {
-        this._animator.endAnimation(this.querySelector("div"));
+        this._animator.endAnimation(this.querySelector('div'));
       }
     }
   }
@@ -75,7 +92,7 @@ export class Navigator extends HTMLElement {
    * @returns {string[]} The list of attributes to watch
    */
   static get observedAttributes() {
-    return ["start"];
+    return ['start'];
   }
 
   /**
@@ -85,28 +102,56 @@ export class Navigator extends HTMLElement {
    * @param {string} newVal 
    */
   async attributeChangedCallback(attrName, oldVal, newVal) {
-    if (attrName === "start") {
+    if (attrName === 'start') {
       if (oldVal !== newVal) {
-        this._screens = await loadScreens();
+        for (const scr of await loadScreens()) {
+          this._screens[scr.route] = scr;
+        }
+        this.dispatchEvent(this.screensLoadedEvent);
         let route = this._router.getRoute();
         if (route) {
           this.jumpTo(route);
         } else {
           this.jumpTo(newVal);
         }
-        this._title = document.querySelectorAll("title")[0];
+        this._title = document.querySelectorAll('title')[0];
       }
     }
   }
 
 
   /**
-  * Current slide
+  * Current screen
   * @returns {Screen} The current screen
   */
   get currentScreen() {
     return this._screens ? this._screens[this._route] : null;
   }
+
+  /**
+  * All known screens
+  * @returns {Object.<string,Screen>} Screens dictionary
+  */
+  get screens() {
+    return this._screens;
+  }
+
+  /**
+   * Get the current route
+   * @returns {string} The current route name
+   */
+  get route() {
+    return this._route;
+  }
+
+  /**
+   * Get the previous route
+   * @returns {string} The previous route name
+   */
+  get routePrevious() {
+    return this._routePrevious;
+  }
+
 }
 
 /**

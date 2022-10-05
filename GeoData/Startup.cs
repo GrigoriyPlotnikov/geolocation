@@ -68,6 +68,7 @@ namespace GeoData
             }
 
             app.UseRouting()
+                .UseDefaultFiles()
                 .UseStaticFiles()
                 .UseEndpoints(endpoints =>
                 {
