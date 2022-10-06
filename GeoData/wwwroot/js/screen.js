@@ -25,11 +25,17 @@ export class Screen {
      * @type {string}
      */
     this._text = text;
+
     /**
-     * Context for embedded scripts
-     * @type {object}
+     * @typedef {object} PromiseContext
+     * @property {Promise<any>} promise
      */
-    this._context = {};
+    /**
+     * @type {PromiseContext}
+     * */
+    this._context = {
+      promise: /** @type {Promise<any>} **/ null
+    };
     /**
      * Data binding helper
      * @type {DataBinding}
@@ -65,10 +71,18 @@ export class Screen {
     else {
       this._transition = null;
     }
+  }
+
+  /**
+   * allows to bind query results if any
+   */
+  async dataBindExecute() {
     // execute any scripts
     const script = this._html.querySelector("script");
     if (script) {
       this._dataBinding.executeInContext(script.innerText, this._context, true);
+      if (this._context.promise)
+        await this._context.promise;
       this._dataBinding.bindAll(this._html, this._context);
     }
   }

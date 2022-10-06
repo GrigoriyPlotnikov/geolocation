@@ -22,6 +22,10 @@ screen-controls a {
     color: white;
     font-size: 24px;
 }
+.disabled {
+    font-weight: 700;
+    pointer-events: none;
+}
 
 screen-deck {
     padding: 32px;

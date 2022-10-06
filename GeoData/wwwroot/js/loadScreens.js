@@ -3,6 +3,7 @@
 // initial code from JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
 
 import { Screen } from './screen.js'
+import { DataBinding } from "./dataBinding.js"
 
 /**
  * Load a single screen
@@ -12,7 +13,9 @@ import { Screen } from './screen.js'
 async function loadScreen(screenRoute) {
   const response = await fetch(`./screens/${screenRoute}.html`);
   const screen = await response.text();
-  return new Screen(screen, screenRoute);
+  const s = new Screen(screen, screenRoute);
+  await s.dataBindExecute();
+  return s;
 }
 
 /**

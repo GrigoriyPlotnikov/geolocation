@@ -31,7 +31,7 @@ export class Navigator extends HTMLElement {
      * The last known route
      * @type {string}
      */
-    this._route = this._router.getRoute();
+    this._route = null;
     /**
      * The previous known route
      * @type {string}
@@ -73,6 +73,9 @@ export class Navigator extends HTMLElement {
     if (this._animator.transitioning) {
       return;
     }
+    if (this._route === route)
+      return;
+
     if (this._screens[route]) {
       this._routePrevious = this._route;
       this._route = route;

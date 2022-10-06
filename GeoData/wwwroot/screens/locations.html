@@ -2,8 +2,58 @@
 <title>Экран поиска списка метоположений</title>
 <h1>Экран поиска списка метоположений</h1>
 
-<form>
-  <span>Город: </span><input type="text" palceholder="cit_Gbqw4"><input type="submit" value="Искать">
+<form onsubmit="
+  event.preventDefault();
+  let params = new URLSearchParams(window.location.search);
+  params.set('city', this['city'].value);
+  window.location.search = params;
+  ">
+  <label>Город: <input type="text" name="city" placeholder="cit_Gbqw4"></label><input type="submit" value="Искать" style="margin-left:8px">
 </form>
 
-<div class="result"></div>
+<div><label>Результаты поиска по <input type="text" id="backwards" data-bind="city" disabled /> городу:</label> </div>
+<div>
+  <div repeat="locations"> <label>Город: <span name="city">{{item.city}}</span></label></div>
+</div>
+<div>
+  <div repeat="errors"> <label>Ошибка: <span name="error">{{item}}</span></label></div>
+</div>
+
+<script>
+  // @ts-check
+
+  /** current case:
+   * scripts form context,
+   * context later data bound on lists and observables
+   * complain: can i have more fancy code over search? something with async
+   * complain: debug is pain
+   * todo: load without refresh of other components
+   */
+  //debugger;
+
+  const params = new URLSearchParams(window.location.search);
+  this.city = this.observable(params.get('city'));
+  this.locations = [];
+  this.errors = [];
+
+  if (this.city.value) {
+    const state = this;
+    this.promise = fetch(`./city/locations?city=${state.city.value}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Сервер не смог обработать запрос. Код ответа: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        /** @type {Location[]} */
+        const locations = data;
+        if (!locations || !locations.length)
+          throw new Error('Местоположение не найдено');
+        state.locations.push(...locations);
+      })
+      .catch(ex => {
+        state.errors.push(ex.message);
+      });
+  }
+</script>

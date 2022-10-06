@@ -2,33 +2,61 @@
 <title>Экран поиска гео-информации</title>
 <h1>Экран поиска гео-информации</h1>
 
-<form>
+<form onsubmit="
+  event.preventDefault();
+  let params = new URLSearchParams(window.location.search);
+  params.set('ip', this['ip'].value);
+  window.location.search = params;
+  ">
   <label>IP: <input type="text" name="ip" placeholder="123.234.123.234"></label><input type="submit" value="Искать" style="margin-left:8px">
 </form>
 
-<results></results>
+<div><label>Результаты поиска по <input type="text" id="backwards" data-bind="ip" disabled /> IP:</label> </div>
+
+<div>
+  <div repeat="locations"> <label>Город: <span name="city">{{item.city}}</span></label></div>
+</div>
+<div>
+  <div repeat="errors"> <label>Ошибка: <span name="error">{{item}}</span></label></div>
+</div>
 
 <script>
   // @ts-check
-const loadIp = function () {
-  fetch(`./ip/location?ip=${document.getElementById('ip').value}`)
-    .then(response => {
-      if (response.ok) {
-        return response.json;
-      }
-      if (res)
-        throw new Error('');
-    })
-    .then(json => {
-      let location = JSON.parse(json);
-      let result = document.getElementById('result');
-      if (Object.keys(location).length === 0)
-        result.innerHTML = 'Местоположение не найдено';
-      else {
-        result.innerHTML = `<div>IP: ${document.getElementById('ip').value}</div>`;
-        result.innerHTML += `<div>City: ${location.city}</div>`;
-      }
-    });
-}
-  
+
+  /** current case:
+   * scripts form context,
+   * context later data bound on lists and observables
+   * complain: can i have more fancy code over search? something with async
+   * complain: debug is pain
+   * todo: load without refresh of other components
+   */
+  //debugger;
+
+  const params = new URLSearchParams(window.location.search);
+  this.ip = this.observable(params.get('ip'));
+  /** @type {Location[]} */
+  this.locations = [];
+  /** @type {string[]} */
+  this.errors = [];
+
+  if (this.ip.value) {
+    const state = this;
+    this.promise = fetch(`./ip/location?ip=${state.ip.value}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Сервер не смог обработать запрос. Код ответа: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        /** @type {Location} */
+        const loc = data;
+        if (!loc || !loc.city)
+          throw new Error('Местоположение не найдено');
+        state.locations.push(loc);
+      })
+      .catch(ex => {
+        state.errors.push(ex.message);
+      });
+  }
 </script>

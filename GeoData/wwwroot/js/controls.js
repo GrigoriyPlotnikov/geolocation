@@ -1,8 +1,9 @@
 ﻿// @ts-check
 
-// initial code from JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
+// idea by JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
 
 import { Navigator } from './navigator.js'
+import { DataBinding } from "./dataBinding.js"
 
 /**
  * Custom element that renders controls to navigate the deck
@@ -24,42 +25,64 @@ export class Controls extends HTMLElement {
 
     /**
      * direct links to control nodes
-     * @type {Object.<string, HTMLAnchorElement}
+     * @type {Object.<string, HTMLAnchorElement>}
      * */
     this._controlRef = {}
 
+    /**
+     * Data binding helper
+     * @type {DataBinding}
+     */
+    this._dataBinding = new DataBinding();
   }
 
   /**
-   * Called when the element is inserted into the DOM. Used to fetch the template and wire into the related Navigator instance.
+   * Called when the element is inserted into the DOM. Used to fetch the template
    */
   async connectedCallback() {
+    const response = await fetch(`./templates/controls.html`);
+    this._template = await response.text();
   }
 
+  /**
+   * Called when navigator have screens
+   *  used to from ui and wire into the related Navigator instance.
+   * */
   formLinks() {
     this.innerHTML = '';
     const host = document.createElement('div');
-    const ul = document.createElement('ul');
-    host.appendChild(ul);
+    host.innerHTML = this._template;
+
+    /**
+     * @typedef {object} Screenlink
+     * @property {string} route route
+     * @property {string} head head
+     */
+
+    /**
+     * @typedef {object} ScreenlinkContext
+     * @property {Screenlink[]} screens 
+     */
+
+    /**
+     * Context for data bind
+     * @type {ScreenlinkContext}
+     */
+    const context = {
+      screens: /** @type {Screenlink[]} **/ []
+    };
 
     if (this._deck.screens) {
       for (const root in this._deck.screens) {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = `#${root}`
-        a.innerText = this._deck.screens[root].head;
-        //a.addEventListener('click', (e) => {
-        //  e.preventDefault();
-        //  this._deck.jumpTo(a.href.substr(1));
-        //});
-        this._controlRef[root] = a;
-        li.appendChild(a);
-        ul.appendChild(li);
+        context.screens.push({ route: root, head: this._deck.screens[root].head});
       }
     }
 
+    this._dataBinding.bindAll(host, context);
+
+    host.querySelectorAll('a').forEach(anchor => this._controlRef[anchor.hash.substr(1)] = anchor);
+
     this.appendChild(host);
-    this.refreshState();
   }
 
   /**
@@ -91,11 +114,11 @@ export class Controls extends HTMLElement {
    */
   refreshState() {
     if (this._deck.route && this._controlRef[this._deck.route]) {
-      this._controlRef[this._deck.route].classList.remove('disabled');
+      this._controlRef[this._deck.route].classList.add('disabled');
     }
 
     if (this._deck.routePrevious && this._controlRef[this._deck.routePrevious]) {
-      this._controlRef[this._deck.routePrevious].classList.add('disabled');
+      this._controlRef[this._deck.routePrevious].classList.remove('disabled');
     }
   }
 }
