@@ -14,7 +14,15 @@
 <div><label>Результаты поиска по <input type="text" id="backwards" data-bind="ip" disabled /> IP:</label> </div>
 
 <div>
-  <div repeat="locations"> <label>Город: <span name="city">{{item.city}}</span></label></div>
+  <div repeat="locations">
+    <div>Страна: <span name="country">{{item.country}}</span></div>
+    <div>Регион: <span name="region">{{item.region}}</span></div>
+    <div>Город: <span name="city">{{item.city}}</span></div>
+    <div>Почтовый код: <span name="city">{{item.postal}}</span></div>
+    <div>Организация: <span name="city">{{item.organization}}</span></div>
+    <div>Широта: <span name="city">{{item.latitude}}</span></div>
+    <div>Долгота: <span name="city">{{item.longitude}}</span></div>
+  </div>
 </div>
 <div>
   <div repeat="errors"> <label>Ошибка: <span name="error">{{item}}</span></label></div>
@@ -32,9 +40,20 @@
    */
   //debugger;
 
+  /**
+   * @typedef {Object} GeoDataLocation
+   * @property {string} country
+   * @property {string} region
+   * @property {string} city
+   * @property {string} postal
+   * @property {string} organization
+   * @property {number} latitude
+   * @property {number} longitude
+   * */
+
   const params = new URLSearchParams(window.location.search);
   this.ip = this.observable(params.get('ip'));
-  /** @type {Location[]} */
+  /** @type {GeoDataLocation[]} */
   this.locations = [];
   /** @type {string[]} */
   this.errors = [];
@@ -49,7 +68,7 @@
         return response.json();
       })
       .then((data) => {
-        /** @type {Location} */
+        /** @type {GeoDataLocation} */
         const loc = data;
         if (!loc || !loc.city)
           throw new Error('Местоположение не найдено');

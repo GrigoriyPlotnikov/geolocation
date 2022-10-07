@@ -28,12 +28,7 @@ namespace GeoData.Db.Model
             {
                 fixed (sbyte* namePtr = city)
                 {
-                    int len = 24;
-                    for (int i = 0; i < len; i++)
-                        if (namePtr[i] == 0x0)
-                            len = i;
-
-                    return new string(namePtr, 0, len, Encoding.ASCII);
+                    return DisplayAny(namePtr, 24);
                 }
             }
 
@@ -41,16 +36,29 @@ namespace GeoData.Db.Model
             {
                 fixed (sbyte* namePtr = city)
                 {
-                    
-                    for (int i = 0; i < 24; i ++)
-                    {
-                        if (value.Length > i)
-                            namePtr[i] = (sbyte)value[i];
-                        else
-                            namePtr[i] = 0x0;
-                    }
+                    SetAny(namePtr, 24, value);
                 }
             }
+        }
+
+        private void SetAny(sbyte* ptr, int len, string value)
+        {
+            for (int i = 0; i < len; i++)
+            {
+                if (value.Length > i)
+                    ptr[i] = (sbyte)value[i];
+                else
+                    ptr[i] = 0x0;
+            }
+        }
+
+        private string DisplayAny(sbyte* ptr, int len)
+        {
+            for (int i = 0; i < len; i++)
+                if (ptr[i] == 0x0)
+                    len = i;
+
+            return new string(ptr, 0, len, Encoding.ASCII);
         }
 
         public int CompareCity(string needle)
@@ -67,9 +75,9 @@ namespace GeoData.Db.Model
                     if (current == 0x0) //the line is over
                     {
                         //both lines are over
-                        if (needle.Length <= i || needle[i] == 0x0) 
+                        if (needle.Length <= i || needle[i] == 0x0)
                             return 0;
-                        else 
+                        else
                             return 1; //the city name is shorter after accounting zero bytes
                     }
 
@@ -81,5 +89,85 @@ namespace GeoData.Db.Model
 
             return 0;
         }
+
+        public string Country
+        {
+            get
+            {
+                fixed (sbyte* namePtr = country)
+                {
+                    return DisplayAny(namePtr, 8);
+                }
+            }
+
+            set
+            {
+                fixed (sbyte* namePtr = country)
+                {
+                    SetAny(namePtr, 8, value);
+                }
+            }
+        }
+
+        public string Postal
+        {
+            get
+            {
+                fixed (sbyte* namePtr = postal)
+                {
+                    return DisplayAny(namePtr, 12);
+                }
+            }
+
+            set
+            {
+                fixed (sbyte* namePtr = postal)
+                {
+                    SetAny(namePtr, 12, value);
+                }
+            }
+        }
+
+        public string Region
+        {
+            get
+            {
+                fixed (sbyte* namePtr = region)
+                {
+                    return DisplayAny(namePtr, 12);
+                }
+            }
+
+            set
+            {
+                fixed (sbyte* namePtr = region)
+                {
+                    SetAny(namePtr, 12, value);
+                }
+            }
+        }
+
+        public string Organization
+        {
+            get
+            {
+                fixed (sbyte* namePtr = organization)
+                {
+                    return DisplayAny(namePtr, 32);
+                }
+            }
+
+            set
+            {
+                fixed (sbyte* namePtr = organization)
+                {
+                    SetAny(namePtr, 32, value);
+                }
+            }
+        }
+
+        public float Latitude { get { return latitude; } set { latitude = value; } }
+
+        public float Longitude { get { return longitude; } set { longitude = value; } }
     }
 }
