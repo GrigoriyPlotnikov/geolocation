@@ -19,9 +19,18 @@ namespace GeoData.Controllers
         // GET: ip/location
         [Route("location")]
         [HttpGet]
-        public ILocation GetLocation(string ip)
+        public ActionResult<ILocation> GetLocation(string ip)
         {
-            return db.GetLocationByIP(ip);
+            try
+            {
+                var loc = db.GetLocationByIP(ip);
+                return Ok(loc);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            
         }
     }
 }

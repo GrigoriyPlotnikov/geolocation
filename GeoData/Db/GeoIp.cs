@@ -76,7 +76,7 @@ namespace GeoData.Db
             var pos = BinarySearch.Search<uint>(ipUint.Value, CompareIpAddess, IpAddresses.Length);
 
             if (pos == null)
-                return null;
+                throw new NotFoundException(ipStr);
 
             return Locations[(int)IpAddresses[pos.Value].location_index];
         }

@@ -66,13 +66,25 @@ namespace UnitTests.GeoDataDb
         }
 
         [TestMethod]
-        public void GetLocationByIpSuccess()
+        public void GetLocationByIp()
         {
-            //empty test ?
-            Assert.IsNull(database.GetLocationByIP("123.234.123.234"));
+            //happy test
+            database.GetLocationByIP("116.226.107.115");
 
-            //
-            Assert.IsNotNull(database.GetLocationByIP("116.226.107.115"));
+            try
+            {
+                //empty test ?
+                Assert.IsNull(database.GetLocationByIP("123.234.123.234"));
+            }
+            catch (NotFoundException)
+            {
+                return;
+            }
+            catch (System.Exception ex)
+            {
+                Assert.Fail("Expected exception of type " + typeof(NotFoundException) + " but type of " + ex.GetType() + " was thrown instead.");
+            }
+            Assert.Fail("Expected exception of type" + typeof(NotFoundException) + "but no exception was thrown.");
         }
     }
 }
