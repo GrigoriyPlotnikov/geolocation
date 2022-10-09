@@ -80,6 +80,8 @@ namespace GeoData.Db.Model
                         else
                             return 1; //the city name is shorter after accounting zero bytes
                     }
+                    if (needle.Length <= i)
+                        return -1; //the city name is longer
 
                     var res = needle[i].CompareTo(current);
                     if (res != 0)

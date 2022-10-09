@@ -18,6 +18,13 @@ namespace UnitTests.GeoDataDb
             Assert.AreEqual(0, location.CompareCity("cit_Kazan"));
 
             Assert.IsTrue(location.CompareCity("cit_Nikosia") > 0);
+
+            //long line
+            location.CompareCity("cit_Erupedebefevy 21342231543234");
+
+            //short line
+            location.CompareCity("cit_K");
+
         }
 
         [TestMethod]

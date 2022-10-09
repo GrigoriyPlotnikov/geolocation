@@ -68,7 +68,7 @@ In the script tag it is set up like this:
 	const n1 = this.observable(2);
 	this.n1 = n1;
 
-The Screen class in screen.js is holds the information that represents a “screen” in the app. Main screen content is formed in the constructor, async dataBindExecute must be called later to perform possible async actions in the screen scripts. 
+The Screen class in screen.js is holds the information that represents a “screen” in the app. Main screen content is formed in the constructor, dataBindExecute in context is called by navigator when screen is displayed. Also, data bind is exposed in context to allow binding later, for example when form chages. 
 
 The router.js module is responsible for handling routing. It has two primary functions:
 - Setting the route (hash) to correspond to the current screen;
@@ -83,7 +83,7 @@ The last module, also a web component, is the controls for the deck. The module 
 #Load requrement
 The handling of 10 000 000 unique users per day (U) and 100 000 000 queries (Q) per day.
 Consider query is a complete load of page incluing UI and a request to HTTP API methods.
-The user performs about (Q / U) = 10 queries per session, which fits in a session about 1 minute long. 
+The user performs about (Q / U) = 10 queries per session. 
 The concurrent users amount per minute can be calculated as U users per day / 24 hrs per day / 60 minute in hour ~ 7000 per minute mean.
 Supposing normal distribution 
 Total requests can be as big as ~ 115 users per second
