@@ -80,7 +80,11 @@ export class Controls extends HTMLElement {
 
     this._dataBinding.bindAll(host, context);
 
-    host.querySelectorAll('a').forEach(anchor => this._controlRef[anchor.hash.substr(1)] = anchor);
+    host.querySelectorAll('a').forEach(anchor => {
+      const route = anchor.hash.substr(1);
+      this._controlRef[route] = anchor;
+      anchor.addEventListener('click', (ev) => { ev.preventDefault(); this._deck.jumpTo(route) });
+    });
 
     this.appendChild(host);
   }

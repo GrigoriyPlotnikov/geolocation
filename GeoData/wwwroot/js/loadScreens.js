@@ -13,9 +13,7 @@ import { DataBinding } from "./dataBinding.js"
 async function loadScreen(screenRoute) {
   const response = await fetch(`./screens/${screenRoute}.html`);
   const screen = await response.text();
-  const s = new Screen(screen, screenRoute);
-  await s.dataBindExecute();
-  return s;
+  return new Screen(screen, screenRoute);
 }
 
 /**

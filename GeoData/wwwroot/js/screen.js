@@ -25,17 +25,6 @@ export class Screen {
      * @type {string}
      */
     this._text = text;
-
-    /**
-     * @typedef {object} PromiseContext
-     * @property {Promise<any>} promise
-     */
-    /**
-     * @type {PromiseContext}
-     * */
-    this._context = {
-      promise: /** @type {Promise<any>} **/ null
-    };
     /**
      * Data binding helper
      * @type {DataBinding}
@@ -59,6 +48,21 @@ export class Screen {
      */
     this._head = this._html.querySelector("meta[name='controlhead']").getAttribute("content");
 
+    /**
+     * @typedef {object} SceenContext
+     * @property {HTMLDivElement} html DOM hosting the screen contents
+     * @property {DataBinding} dataBinding Data binding helper
+     * @property {boolean} dataBound Data binding helper
+     */
+    /**
+     * @type {SceenContext}
+     * */
+    this._context = {
+      html: this._html,
+      dataBinding: this._dataBinding,
+      dataBound: false
+    };
+
     /** @type{NodeListOf<HTMLElement>} */
     const transition = (this._html.querySelectorAll("transition"));
     if (transition.length) {
@@ -79,11 +83,12 @@ export class Screen {
   async dataBindExecute() {
     // execute any scripts
     const script = this._html.querySelector("script");
-    if (script) {
+    if (script && !this._context.dataBound) {
       this._dataBinding.executeInContext(script.innerText, this._context, true);
-      if (this._context.promise)
-        await this._context.promise;
-      this._dataBinding.bindAll(this._html, this._context);
+      this._context.dataBound = true;
+      //if (this._context.promise)
+        //await this._context.promise;
+      //this._dataBinding.bindAll(this._html, this._context);
     }
   }
 

@@ -1,5 +1,5 @@
 ﻿// @ts-check
-///all credits to JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
+///idea by JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
 
 import { Observable, Computed } from "./observable.js"
 
@@ -96,6 +96,9 @@ export class DataBinding {
     });
   }
 
+//  <div>
+//  <div repeat="errors"> <label>Ошибка: <span name="error">{{ item }}</span></label></div>
+//</div>
   /**
    * Searches for "repeat" attribute to data-bind lists
    * @param {HTMLElement} elem The parent element to search 
@@ -106,9 +109,14 @@ export class DataBinding {
     listBinding.forEach(elem => {
       const parent = elem.parentElement;
       const expression = elem.getAttribute("repeat");
+      elem.classList.remove('hidden');
       elem.removeAttribute("repeat");
       const template = elem.outerHTML;
-      parent.removeChild(elem);
+      elem.classList.add('hidden');
+      elem.setAttribute("repeat", expression);
+      while (parent.lastElementChild) {
+        parent.removeChild(parent.lastElementChild);
+      }
       context[expression].forEach(item => {
         let newTemplate = `${template}`;
         const matches = newTemplate.match(/\{\{([^\}]*?)\}\}/g);
@@ -121,6 +129,7 @@ export class DataBinding {
           parent.innerHTML += newTemplate;
         }
       });
+      parent.appendChild(elem);
     });
   }
 }

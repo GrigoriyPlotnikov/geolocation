@@ -2,12 +2,7 @@
 <title>Экран поиска списка метоположений</title>
 <h1>Экран поиска списка метоположений</h1>
 
-<form onsubmit="
-  event.preventDefault();
-  let params = new URLSearchParams(window.location.search);
-  params.set('city', this['city'].value);
-  window.location.search = params;
-  ">
+<form>
   <label>Город: <input type="text" name="city" placeholder="cit_Gbqw4"></label><input type="submit" value="Искать" style="margin-left:8px">
 </form>
 
@@ -30,13 +25,32 @@
 <script>
   // @ts-check
 
-  /** current case:
-   * scripts form context,
-   * context later data bound on lists and observables
-   * complain: can i have more fancy code over search? something with async
-   * complain: debug is pain
-   * todo: load without refresh of other components
+  /** what is happening here:
+   * when the screen is displayed by navigator, it performs script tag with some context
+   * context can be data bound on lists and observables
    */
+  //debugger;
+
+  /**
+  * @typedef {Object} DataBinding
+  * @property {function(HTMLElement, Object): any} bindAll
+  * */
+
+  /**
+    * @typedef {object} ScreenContext
+    * @property {HTMLDivElement} html DOM hosting the screen contents
+    * @property {DataBinding} dataBinding Data binding helper
+    */
+
+  /** @typeof {ScreenContext} */
+  const state = this;
+
+  //this is required for data bind
+  state.city = state.observable(new URLSearchParams(window.location.search).get('city'));
+  ///** @type {GeoDataLocation[]} */
+  state.locations = [];
+  ///** @type {string[]} */
+  state.errors = [];
 
   /**
    * @typedef {Object} GeoDataLocation
@@ -49,16 +63,14 @@
    * @property {number} longitude
    * */
 
-  const params = new URLSearchParams(window.location.search);
-  this.city = this.observable(params.get('city'));
-  /** @type {GeoDataLocation[]} */
-  this.locations = [];
-  /** @type {string[]} */
-  this.errors = [];
-
-  if (this.city.value) {
-    const state = this;
-    this.promise = fetch(`./city/locations?city=${state.city.value}`)
+  /**
+    * 
+    * 
+    * @param city {string}
+    * @param state {ScreenContext}
+    */
+  function getData(city, state) {
+    fetch(`./city/locations?city=${city}`)
       .then(response => {
         if (!response.ok) {
           throw new Error(`Сервер не смог обработать запрос. Код ответа: ${response.status}`);
@@ -71,9 +83,37 @@
         if (!locations || !locations.length)
           throw new Error('Местоположение не найдено');
         state.locations.push(...locations);
+        state.dataBinding.bindAll(state.html, state);
       })
       .catch(ex => {
         state.errors.push(ex.message);
+        state.dataBinding.bindAll(state.html, state);
       });
   }
+
+  //provide behaviour to a from
+  async function formSubmit(event) {
+    event.preventDefault();
+    //replace the window link -- we are in next page
+    let params = new URLSearchParams(window.location.search);
+    params.set('city', this['city'].value);
+    history.pushState({ 'city': this['city'].value }, '',
+      document.location.protocol + '//' + document.location.host +
+      document.location.pathname + '?' + params.toString() + document.location.hash);
+    //provide values for observer
+    state.city.value = this['city'].value;
+    state.locations.length = 0;
+    state.errors.length = 0;
+    //perform the request and see what is there
+    getData(this['city'].value, state);
+  }
+  state.html.querySelectorAll('form')[0].addEventListener('submit', formSubmit);
+
+  //data can be already passed in link
+  if (state.city.value) {
+    getData(state.city.value, state);
+  }
+  else
+    //otherwise just empties templates
+    state.dataBinding.bindAll(state.html, state);
 </script>

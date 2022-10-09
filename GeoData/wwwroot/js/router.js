@@ -50,7 +50,9 @@ export class Router {
    * @param {string} route The route name 
    */
   setRoute(route) {
-    window.location.hash = route;
+    history.pushState({}, '',
+      document.location.protocol + '//' + document.location.host +
+      document.location.pathname + '#' + route);
     this._route = route;
   }
 

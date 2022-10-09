@@ -84,6 +84,7 @@ export class Navigator extends HTMLElement {
       this._router.setRoute(route);
       document.title = `${this.currentScreen.title}`;
       this.dispatchEvent(this.screenChangedEvent);
+      this.currentScreen.dataBindExecute();
       if (this._animator.animationReady) {
         this._animator.endAnimation(this.querySelector('div'));
       }

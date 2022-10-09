@@ -45,3 +45,7 @@ screen-deck {
     margin: 16px;
     width: 200px;
 }
+
+.hidden {
+    display:none;
+}
