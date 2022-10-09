@@ -81,7 +81,8 @@ export class Navigator extends HTMLElement {
       this._route = route;
       this.innerHTML = '';
       this.appendChild(this.currentScreen.html);
-      this._router.setRoute(route);
+      if (this._routePrevious)
+        this._router.setRoute(route);
       document.title = `${this.currentScreen.title}`;
       this.dispatchEvent(this.screenChangedEvent);
       this.currentScreen.dataBindExecute();

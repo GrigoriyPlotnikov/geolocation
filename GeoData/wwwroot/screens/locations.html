@@ -112,6 +112,7 @@
 
   //data can be already passed in link
   if (state.city.value) {
+    state.search = window.location.search.substr(1);
     getData(state.city.value, state);
   }
   else

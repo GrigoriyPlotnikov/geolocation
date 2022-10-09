@@ -30,7 +30,7 @@
    * when the screen is displayed by navigator, it performs script tag with some context
    * context can be data bound on lists and observables
    */
-  //debugger;
+  debugger;
 
   /**
   * @typedef {Object} DataBinding
@@ -117,6 +117,7 @@
 
   //data can be already passed in link
   if (state.ip.value) {
+    state.search = window.location.search.substr(1);
     getData(state.ip.value, state);
   }
   else
