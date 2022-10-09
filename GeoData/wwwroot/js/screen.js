@@ -53,6 +53,7 @@ export class Screen {
      * @property {HTMLDivElement} html DOM hosting the screen contents
      * @property {DataBinding} dataBinding Data binding helper
      * @property {boolean} dataBound Data binding helper
+     * @property {string} search The search parameter
      */
     /**
      * @type {SceenContext}
@@ -60,7 +61,8 @@ export class Screen {
     this._context = {
       html: this._html,
       dataBinding: this._dataBinding,
-      dataBound: false
+      dataBound: false,
+      search: ''
     };
 
     /** @type{NodeListOf<HTMLElement>} */
@@ -90,6 +92,10 @@ export class Screen {
         //await this._context.promise;
       //this._dataBinding.bindAll(this._html, this._context);
     }
+    if (this._context.search)
+      history.replaceState({ }, '',
+        document.location.protocol + '//' + document.location.host +
+        document.location.pathname + '?' + this._context.search + document.location.hash);
   }
 
   /** 
