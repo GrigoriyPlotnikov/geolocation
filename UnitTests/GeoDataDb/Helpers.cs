@@ -71,7 +71,7 @@ namespace UnitTests.GeoDataDb
             var ipStr = "123.234.123.234";
             var ipUint = IpAddress.GetAddress(ipStr);
 
-            Assert.AreEqual(ipStr, string.Join(".", BitConverter.GetBytes(ipUint.Value).Select(b => b.ToString("G"))));
+            Assert.AreEqual(ipStr, string.Join(".", BitConverter.GetBytes(ipUint.Value).Reverse().Select(b => b.ToString("G"))));
         }
     }
 }

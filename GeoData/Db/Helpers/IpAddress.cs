@@ -13,10 +13,10 @@ namespace GeoData.Db.Helpers
             if (ipBytes.Length != 4)
                 return null;
 
-            return ((uint)(ipBytes[3] << 24)) |
-               ((uint)(ipBytes[2] << 16)) |
-               ((uint)(ipBytes[1] << 8)) |
-               ((uint)(ipBytes[0]));
+            return ((uint)(ipBytes[0] << 24)) |
+               ((uint)(ipBytes[1] << 16)) |
+               ((uint)(ipBytes[2] << 8)) |
+               ((uint)(ipBytes[3]));
         }
     }
 }

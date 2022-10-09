@@ -71,10 +71,15 @@ namespace UnitTests.GeoDataDb
             //happy test
             database.GetLocationByIP("116.226.107.115");
 
+            //ranges test
+            var loc = database.GetLocationByIP("118.83.161.94");
+            Assert.AreEqual(loc, database.GetLocationByIP("118.83.207.177"));
+            Assert.AreNotEqual(loc, database.GetLocationByIP("118.83.207.178"));
+
             try
             {
                 //empty test ?
-                Assert.IsNull(database.GetLocationByIP("123.234.123.234"));
+                Assert.IsNull(database.GetLocationByIP("234.123.234.123"));
             }
             catch (NotFoundException)
             {

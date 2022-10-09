@@ -36,7 +36,7 @@ namespace UnitTests.GeoDataDb
 
             Assert.AreEqual(-1, range.CompareAddress(IpAddress.GetAddress("118.83.161.93").Value));
 
-            Assert.AreEqual(1, range.CompareAddress(IpAddress.GetAddress("118.83.161.178").Value));
+            Assert.AreEqual(1, range.CompareAddress(IpAddress.GetAddress("118.83.207.178").Value));
 
         }
     }

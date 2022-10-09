@@ -41,7 +41,7 @@ namespace GeoData.Db.Model
             }
         }
 
-        private void SetAny(sbyte* ptr, int len, string value)
+        private static void SetAny(sbyte* ptr, int len, string value)
         {
             for (int i = 0; i < len; i++)
             {
@@ -52,7 +52,7 @@ namespace GeoData.Db.Model
             }
         }
 
-        private string DisplayAny(sbyte* ptr, int len)
+        private static string DisplayAny(sbyte* ptr, int len)
         {
             for (int i = 0; i < len; i++)
                 if (ptr[i] == 0x0)
