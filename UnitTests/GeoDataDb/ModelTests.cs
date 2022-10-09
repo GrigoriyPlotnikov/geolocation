@@ -1,4 +1,5 @@
-﻿using GeoData.Db.Model;
+﻿using GeoData.Db.Helpers;
+using GeoData.Db.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.GeoDataDb
@@ -24,17 +25,18 @@ namespace UnitTests.GeoDataDb
         {
             var range = new IpRange
             {
-                ip_from = 1,
-                ip_to = 3
+                From = "118.83.161.94",
+                To = "118.83.207.177"
             };
 
-            Assert.AreEqual(0, range.CompareAddress(1));
-            Assert.AreEqual(0, range.CompareAddress(2));
-            Assert.AreEqual(0, range.CompareAddress(3));
+            Assert.AreEqual(0, range.CompareAddress(IpAddress.GetAddress("118.83.161.94").Value));
+            Assert.AreEqual(0, range.CompareAddress(IpAddress.GetAddress("118.83.161.95").Value));
+            Assert.AreEqual(0, range.CompareAddress(IpAddress.GetAddress("118.83.161.123").Value));
+            Assert.AreEqual(0, range.CompareAddress(IpAddress.GetAddress("118.83.161.177").Value));
 
-            Assert.AreEqual(-1, range.CompareAddress(4));
+            Assert.AreEqual(-1, range.CompareAddress(IpAddress.GetAddress("118.83.161.93").Value));
 
-            Assert.AreEqual(1, range.CompareAddress(0));
+            Assert.AreEqual(1, range.CompareAddress(IpAddress.GetAddress("118.83.161.178").Value));
 
         }
     }
