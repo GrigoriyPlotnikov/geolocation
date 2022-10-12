@@ -1,16 +1,16 @@
-Test task:
+# Test task:
 Make a web app capable of returning user coords by IP and a list of places for given city.
 
-Tools:
+## Tools:
 - C#, ASP.NET Core
 - MS Visual Studio
 - HTML5, CSS3, JavaScript
 
-Architecture and source code requirements:
+## Architecture and source code requirements:
 - The app design must be capable to provide handling of 10 000 000 unique users per day and 100 000 000 queries per day.
 - User interface must be a Single Page Application, as lightweight as it is possible, and should be written on JavaScript without using of 3-rd party SPA frameworks.
 
-Tech requirements:
+## Tech requirements:
 - Database should be loaded in memory at application start, in one thread and without any parallelism whatsoever.
 - Database load time should not differ from file reading time more than on 5 ms on data parsing, index creation and any other possible overheads.
 - The database must use fast binary search for both acquiring location by IP and list of places by city.
@@ -21,7 +21,7 @@ Tech requirements:
 
 The complete [task description](https://www.metaquotes.net/ru/company/vacancies/tests/dot-net)
 
-Solution description:
+# Solution description:
 - Main part is GeoData/GeoData.csproj, can be launched by "dotnet run" command
 - The Benchmarks folder contains database load test and results
    |             Method |          Mean |        Error |        StdDev |   Allocated | Ratio | Ratio SD | Alloc Ratio |
@@ -33,7 +33,7 @@ Solution description:
 - UI is in \GeoData\wwwroot folder, exposed to Kestrel server by   .UseDefaultFiles().UseStaticFiles() expression. Entry point is Index.html page that includes the js/app.js module. Webpack is yet to be attached to serve page UI in one request.
 - The idea for UI credits to [JeremyLikness](https://github.com/JeremyLikness/vanillajs-deck/) that at some measure stretches the requirement of not using 3rd party frameworks 
 
-#The UI structure
+## The UI structure
 index.html sets up both web components for two-parts UI 
 	<screen-controls deck="main"> --- </screen-controls>
 	<screen-deck id="main" start="home">
@@ -80,10 +80,35 @@ The navigator.js is the “main module” that displays the deck. It is responsi
 
 The last module, also a web component, is the controls for the deck. The module is plugged into the web component lifecycle to load the template for the contols and wire in event listeners of parent navigator to display screens.
 
-#Load requrement
+## Load requrement
 The handling of 10 000 000 unique users per day (U) and 100 000 000 queries (Q) per day.
-Consider query is a complete load of page incluing UI and a request to HTTP API methods.
-The user performs about (Q / U) = 10 queries per session. 
-The concurrent users amount per minute can be calculated as U users per day / 24 hrs per day / 60 minute in hour ~ 7000 per minute mean.
-Supposing normal distribution 
-Total requests can be as big as ~ 115 users per second
+According to the <https://www.techempower.com/benchmarks/#section=test&runid=8ca46892-e46c-4088-9443-05722ad6f7fb&hw=ph&test=plaintext> this  well within Kestel server capabilities (7 million per second!) so all blockers can be in controller code.
+
+Consider user session start is a complete load of html page incluing scripts and styles and a request to HTTP API methods. One improvement can be a Webpack to combine app.js in one file and minify it. Rest queries are pure API. 
+
+The user performs about (Q / U) = 10 API queries per session. We dont have user reaction time, so we'l try to model it, consider it as something random from as fast as 500 ms to as long as 1 minute.
+Session length becomes 5 s to 10 minutes. Average session length ~5 min
+
+The hourly users amount can be calculated as U users per day / 24 hrs per day ~ 420K. Consider / 60 minute in hour / 5 min session duration ~ 35 0000 concurrent users.  Peak can be as high as 35 000 simultaneous requests, still within server capabilities, but too much to my current server capabilities (see below)
+
+Average requests can be 420K users per hour \* 10 requests / 3600 sec in hour ~ 1200 request per second. 
+
+Netling Running 10s test with 1024 threads @ http://localhost:5000/city/locations?city=cit_Erupedebefevy O
+
+39924 requests in 10.22s
+    Requests/sec:   3905
+    Bandwidth:      77 mbit
+    Errors:         0
+Latency
+    Median:         32.111 ms
+    StdDev:         92.587 ms
+    Min:            8.439 ms
+    Max:            428.365 ms
+
+  █
+ ██
+ ███
+ ███
+ ████                                       ██
+ █████                                      ██
+█████████████████████████ ████ ████████████████  █  █████ ████ █        █      █
