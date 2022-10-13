@@ -81,6 +81,20 @@ namespace IntegrationTests
             Assert.Equal(resultingStatusCode, response.StatusCode);
         }
 
+        [Fact]
+        public async Task IpController_BadRequest()
+        {
+            var ip = "8.8.8.8";
+            var givenException = new InvalidOperationException("foo");
+            var resultingStatusCode = HttpStatusCode.UnprocessableEntity;
+
+            _dbMock
+                .Setup(dbm => dbm.GetLocationByIP(ip))
+                .Throws(givenException);
+
+            var response = await _httpClient.GetAsync($"ip/location/?ip={ip}");
+            Assert.Equal(resultingStatusCode, response.StatusCode);
+        }
 
         [Fact]
         public async Task CityController_HappyPath()
