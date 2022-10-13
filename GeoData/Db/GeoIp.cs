@@ -23,7 +23,7 @@ namespace GeoData.Db
                     start: (int)header.offset_ranges,
                     length: (int)(header.offset_locations - header.offset_ranges)
                     );
-                return MemoryMarshal.Cast<byte, IpRange>(ipRangeBytes).ToArray();
+                return MemoryMarshal.Cast<byte, IpRange>(ipRangeBytes);
             }
         }
 
