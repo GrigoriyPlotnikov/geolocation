@@ -89,10 +89,11 @@ Consider user session start is a complete load of html page incluing scripts and
 The user performs about (Q / U) = 10 API queries per session. We dont have user reaction time, so we'l try to model it, consider it as something random from as fast as 500 ms to as long as 1 minute.
 Session length becomes 5 s to 10 minutes. Average session length ~5 min
 
-The hourly users amount can be calculated as U users per day / 24 hrs per day ~ 420K. Consider / 60 minute in hour / 5 min session duration ~ 35 0000 concurrent users.  Peak can be as high as 35 000 simultaneous requests, still within server capabilities, but too much to my current server capabilities (see below)
+The hourly users amount can be calculated as U users per day / 24 hrs per day ~ 420K. Consider / 60 minute in hour / 5 min session duration ~ 35 0000 concurrent users.  Peak can be as high as 35 000 simultaneous requests, still within theroetical server capabilities, but too much to my dev environment (see below). Sharding can be used when peaks are reached.
 
 Average requests can be 420K users per hour \* 10 requests / 3600 sec in hour ~ 1200 request per second. 
 
+### Netling test of city controller
 Netling Running 10s test with 1024 threads @ http://localhost:5000/city/locations?city=cit_Erupedebefevy O
 
 39924 requests in 10.22s
@@ -112,3 +113,25 @@ Latency
  ████                                       ██
  █████                                      ██
 █████████████████████████ ████ ████████████████  █  █████ ████ █        █      █
+
+### Netling test of location controller
+Running 10s test with 1024 threads @ http://localhost:5000/ip/location?ip=116.226.107.115
+
+46376 requests in 10.08s
+    Requests/sec:   4599
+    Bandwidth:      11 mbit
+    Errors:         0
+Latency
+    Median:         103.356 ms
+    StdDev:         32.780 ms
+    Min:            10.705 ms
+    Max:            222.361 ms
+
+                                   █
+                                   █
+                                  ██
+                                  ███
+                                  ████
+                              █ █ █████
+███████████████████████████████████████████████████████ █ █ ██ █  █ █ █  ███   █
+10.705 ms =========================================================== 222.361 ms

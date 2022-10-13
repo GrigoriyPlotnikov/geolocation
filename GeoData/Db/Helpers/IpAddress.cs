@@ -6,6 +6,9 @@ namespace GeoData.Db.Helpers
     {
         public static uint? GetAddress(string ipStr)
         {
+            if (ipStr == null)
+                return null;
+
             var ipBytes = new byte[4];
             int byteIndex = 0;
             //ipV4 only
