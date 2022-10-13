@@ -6,12 +6,24 @@ namespace GeoData.Db.Helpers
     {
         public static uint? GetAddress(string ipStr)
         {
-            var address = IPAddress.Parse(ipStr);
-            var ipBytes = address.GetAddressBytes();
-
+            var ipBytes = new byte[4];
+            int byteIndex = 0;
             //ipV4 only
-            if (ipBytes.Length != 4)
-                return null;
+            for (int i = 0; i < ipStr.Length; i++)
+            {
+                if (char.IsDigit(ipStr[i]))
+                {
+                    ipBytes[byteIndex] = (byte)(ipBytes[byteIndex] * 10 + (int)ipStr[i] - 0x30);
+                }
+                else if (ipStr[i].Equals('.'))
+                {
+                    byteIndex++;
+                    if (byteIndex == 4)
+                        return null;
+                }
+                else
+                    return null;
+            }
 
             return ((uint)(ipBytes[0] << 24)) |
                ((uint)(ipBytes[1] << 16)) |
