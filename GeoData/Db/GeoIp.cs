@@ -6,6 +6,7 @@ using GeoData.Db.Helpers;
 using Microsoft.Extensions.Options;
 using GeoData.Contracts;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace GeoData.Db
 {
@@ -66,19 +67,22 @@ namespace GeoData.Db
 
         public string Name { get { return header.Name; } }
 
-        public ILocation GetLocationByIP(string ipStr)
+        public Task<ILocation> GetLocationByIP(string ipStr)
         {
             var ipUint = IpAddress.GetAddress(ipStr);
 
             if (ipUint == null)
                 throw new InvalidOperationException(ipStr);
 
-            var pos = BinarySearch.Search<uint>(ipUint.Value, CompareIpAddess, IpAddresses.Length);
+            return Task.Run<ILocation>(() =>
+            {
+                var pos = BinarySearch.Search<uint>(ipUint.Value, CompareIpAddess, IpAddresses.Length);
 
-            if (pos == null)
-                throw new NotFoundException(ipStr);
+                if (pos == null)
+                    throw new NotFoundException(ipStr);
 
-            return Locations[(int)IpAddresses[pos.Value].location_index];
+                return Locations[(int)IpAddresses[pos.Value].location_index];
+            });
         }
 
         private int CompareIpAddess(int position, uint needle)

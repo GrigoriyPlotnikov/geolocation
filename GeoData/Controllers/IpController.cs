@@ -20,11 +20,11 @@ namespace GeoData.Controllers
         // GET: ip/location
         [Route("location")]
         [HttpGet]
-        public ActionResult<ILocation> GetLocation(string ip)
+        public async Task<ActionResult<ILocation>> GetLocation(string ip)
         {
             try
             {
-                var loc = db.GetLocationByIP(ip);
+                var loc = await db.GetLocationByIP(ip);
                 return Ok(loc);
             }
             catch (NotFoundException ex)

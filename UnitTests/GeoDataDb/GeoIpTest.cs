@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Linq;
+using System.Threading.Tasks;
 using UnitTests.Mock;
 
 namespace UnitTests.GeoDataDb
@@ -66,20 +67,20 @@ namespace UnitTests.GeoDataDb
         }
 
         [TestMethod]
-        public void GetLocationByIp()
+        public async Task GetLocationByIp()
         {
             //happy test
-            database.GetLocationByIP("116.226.107.115");
+            Assert.IsNotNull(await database.GetLocationByIP("116.226.107.115"));
 
             //ranges test
-            var loc = database.GetLocationByIP("118.83.161.94");
-            Assert.AreEqual(loc, database.GetLocationByIP("118.83.207.177"));
-            Assert.AreNotEqual(loc, database.GetLocationByIP("118.83.207.178"));
+            var loc = await database.GetLocationByIP("118.83.161.94");
+            Assert.AreEqual(loc, await database.GetLocationByIP("118.83.207.177"));
+            Assert.AreNotEqual(loc, await database.GetLocationByIP("118.83.207.178"));
 
             try
             {
                 //empty test ?
-                Assert.IsNull(database.GetLocationByIP("234.123.234.123"));
+                Assert.IsNull(await database.GetLocationByIP("234.123.234.123"));
             }
             catch (NotFoundException)
             {

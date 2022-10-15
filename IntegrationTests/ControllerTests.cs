@@ -55,7 +55,7 @@ namespace IntegrationTests
 
             _dbMock
                 .Setup(dbm => dbm.GetLocationByIP(ip))
-                .Returns(loc);
+                .Returns(Task.Run<ILocation>(() => loc));
 
             var response = await _httpClient.GetAsync($"ip/location/?ip={ip}");
             response.EnsureSuccessStatusCode();

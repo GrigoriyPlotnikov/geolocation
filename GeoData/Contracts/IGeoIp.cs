@@ -11,6 +11,6 @@ namespace GeoData.Contracts
 
         /// <exception cref="InvalidOperationException">is thrown if the ip does not parsed</exception>
         /// <exception cref="NotFoundException">is thrown if the ip does not exists in db</exception>
-        ILocation GetLocationByIP(string ipStr);
+        Task<ILocation> GetLocationByIP(string ipStr);
     }
 }
