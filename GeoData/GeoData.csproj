@@ -10,6 +10,10 @@
     <None Include="wwwroot\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Remove="wwwroot\js\**" />
+    <Content Remove="wwwroot\js\**" />
+    <EmbeddedResource Remove="wwwroot\js\**" />
+    <None Remove="wwwroot\js\**" />
     <None Include="Configs\appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -30,7 +34,6 @@
   </ItemGroup>
   
   <Target Name="PrepScriptDebug" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">
-    <Message Text="Inside PrepublishScript" Importance="high"/>
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
   </Target>
