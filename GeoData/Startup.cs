@@ -8,6 +8,7 @@ using GeoData.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -48,6 +49,11 @@ namespace GeoData
                 .AddSwaggerGen()
                 .AddMvcCore()
                 .AddApiExplorer();
+
+                services.AddSpaStaticFiles(conf =>
+                {
+                    conf.RootPath = "GeoApp/dist";
+                });
             }
             catch (Exception e)
             {
@@ -68,12 +74,23 @@ namespace GeoData
             }
 
             app.UseRouting()
-                .UseDefaultFiles()
                 .UseStaticFiles()
                 .UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
-                });
+                })
+                .UseSpaStaticFiles();
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "GeoApp";
+
+                if (env.IsDevelopment())
+                {
+                    //spa.UseReactDevelopmentServer(npmScript: "build:hotdev");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:8083");
+                }
+            });
         }
     }
 }

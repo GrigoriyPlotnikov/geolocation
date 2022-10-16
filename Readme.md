@@ -22,6 +22,7 @@ Make a web app capable of returning user coords by IP and a list of places for g
 The complete [task description](https://www.metaquotes.net/ru/company/vacancies/tests/dot-net)
 
 # Solution description:
+- To run developent environment with webpack server and hot reload please run "npm run watch" in ./GeoData/GeoApp folder, and then start the .Net Core server by  "dotnet run" command
 - Main part is GeoData/GeoData.csproj, can be launched by "dotnet run" command
 - The Benchmarks folder contains database load test and results
    |             Method |          Mean |        Error |        StdDev |   Allocated | Ratio | Ratio SD | Alloc Ratio |
