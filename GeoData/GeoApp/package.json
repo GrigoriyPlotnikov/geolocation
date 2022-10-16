@@ -12,6 +12,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.19.3",
+    "@babel/plugin-syntax-jsx": "^7.18.6",
+    "@babel/plugin-transform-react-jsx": "^7.19.0",
+    "babel-loader": "^8.2.5",
     "webpack": "^5.52.1",
     "webpack-cli": "^4.8.0"
   }

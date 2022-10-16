@@ -3,23 +3,31 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
 	<SpaRoot>GeoApp\</SpaRoot>
+	<StaticRoot>wwwroot\</StaticRoot>
+	<WebpackOutput>wwwroot\js\</WebpackOutput>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\**">
+    <None Include="$(StaticRoot)**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Remove="wwwroot\js\**" />
-    <Content Remove="wwwroot\js\**" />
-    <EmbeddedResource Remove="wwwroot\js\**" />
-    <None Remove="wwwroot\js\**" />
+	
+	<!-- Hide the webpack out from studio to not confuse ppl -->
+    <Compile Remove="$(WebpackOutput)**" />
+    <Content Remove="$(WebpackOutput)**" />
+    <EmbeddedResource Remove="$(WebpackOutput)**" />
+    <None Remove="$(WebpackOutput)**" />
+	<!-- Hide the webpack out from studio to not confuse ppl -->
+	
     <None Include="Configs\appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Configs\nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+	<Content Remove="$(SpaRoot)package*.json" />
+    <None Include="$(SpaRoot)package*.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,5 +49,13 @@
   <Target Name="PrepScriptRelease" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Release' ">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:prod" />
+  </Target>
+  
+  <Target Name="PublishWebpack" AfterTargets="AfterBuild">
+    <!-- Include the newly-built files in the publish output -->
+	<ItemGroup>
+		<WebpackFiles Include="$(WebpackOutput)**" />
+	</ItemGroup>
+	<Copy SourceFiles="@(WebpackFiles)" DestinationFolder="$(OutDir)$(WebpackOutput)%(RecursiveDir)" />
   </Target>
 </Project>
