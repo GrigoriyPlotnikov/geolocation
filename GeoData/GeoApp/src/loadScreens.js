@@ -21,7 +21,6 @@ async function loadScreen(screenRoute) {
  */
 export async function loadScreens() {
   const slides = []
-  slides.push(await loadScreen('home'));
   slides.push(await loadScreen('ip'));
   slides.push(await loadScreen('locations'));
   return slides;

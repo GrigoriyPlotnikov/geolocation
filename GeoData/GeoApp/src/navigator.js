@@ -3,9 +3,18 @@
 // initial code from JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
 
 import { loadScreens } from './loadScreens.js'
+import { createElement } from './component.js'
+import { Home } from './screens/home.js'
 import { Router } from './router.js'
 import { Animator } from './animator.js'
 import { Screen } from './screen.js'
+
+/**
+ * @typedef {object} JsxScreen
+ * @property {string} head head
+ * @property {string} title title
+ * @property {HTMLElement} element
+ * */
 
 /**
  * The main class that handles rendering the screen deck
@@ -42,6 +51,14 @@ export class Navigator extends HTMLElement {
      *  @type {Object.<string, Screen>}
      * */
     this._screens = {};
+
+    /** 
+     *  Known jsx screens
+     *  @type {Object.<string, JsxScreen>}
+     * */
+    this._jsx_screens = {
+      "home": { element: Home(), head: 'О приложении', title: 'Экран информации о приложении' }
+    };
     /**
      * Custom event raised when the current screen changes
      * @type {CustomEvent}
@@ -89,6 +106,17 @@ export class Navigator extends HTMLElement {
       if (this._animator.animationReady) {
         this._animator.endAnimation(this.querySelector('div'));
       }
+    }
+
+    if (this._jsx_screens[route]) {
+      this._routePrevious = this._route;
+      this._route = route;
+      this.innerHTML = '';
+      this.appendChild(this._jsx_screens[route].element);
+      if (this._routePrevious)
+        this._router.setRoute(route);
+      document.title = this.querySelectorAll("title")[0].innerText;
+      this.dispatchEvent(this.screenChangedEvent);
     }
   }
 
@@ -139,6 +167,14 @@ export class Navigator extends HTMLElement {
   */
   get screens() {
     return this._screens;
+  }
+
+  /**
+  * All known screens
+  * @returns {Object.<string, JsxScreen>} Screens dictionary
+  */
+  get jsx_screens() {
+    return this._jsx_screens;
   }
 
   /**

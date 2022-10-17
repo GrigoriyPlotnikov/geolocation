@@ -72,6 +72,12 @@ export class Controls extends HTMLElement {
       screens: /** @type {Screenlink[]} **/ []
     };
 
+    if (this._deck.jsx_screens) {
+      for (const r in this._deck.jsx_screens) {
+        context.screens.push({ route: r, head: this._deck.jsx_screens[r].head });
+      }
+    }
+
     if (this._deck.screens) {
       for (const root in this._deck.screens) {
         context.screens.push({ route: root, head: this._deck.screens[root].head});
