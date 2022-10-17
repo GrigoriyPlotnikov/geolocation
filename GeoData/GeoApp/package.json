@@ -4,7 +4,7 @@
   "description": "",
   "main": "src\\app.js",
   "scripts": {
-    "watch": "webpack --mode=development --watch --progress",
+    "watch": "webpack --mode=development --config watch.config.js --watch --progress",
     "build": "webpack --mode=development",
     "build:prod": "webpack --mode=production",
     "test": "echo \"Error: no test specified\" && exit 1"
