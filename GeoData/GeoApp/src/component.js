@@ -1,6 +1,6 @@
 ﻿// @ts-check
 
-//idea by Kartik Nair https://blog.kartikn.me/
+//idea by Kartik Nair https://dev.to/kartiknair
 
 
 /**

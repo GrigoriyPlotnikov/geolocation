@@ -2,12 +2,11 @@
 
 // initial code from JeremyLikness https://github.com/JeremyLikness/vanillajs-deck/
 
-import { loadScreens } from './loadScreens.js'
 import { createElement } from './component.js'
 import { Home } from './screens/home.js'
+import { Ip } from './screens/ip.js'
+import { Locations } from './screens/locations.js'
 import { Router } from './router.js'
-import { Animator } from './animator.js'
-import { Screen } from './screen.js'
 
 /**
  * @typedef {object} JsxScreen
@@ -26,11 +25,7 @@ export class Navigator extends HTMLElement {
  */
   constructor() {
     super();
-    /**
-     * The related animation control
-     * @type {Animator}
-     */
-    this._animator = new Animator();
+
     /**
      * The related router control
      * @type {Router}
@@ -46,18 +41,15 @@ export class Navigator extends HTMLElement {
      * @type {string}
      */
     this._routePrevious = null;
-    /** 
-     *  Known screens
-     *  @type {Object.<string, Screen>}
-     * */
-    this._screens = {};
 
     /** 
      *  Known jsx screens
      *  @type {Object.<string, JsxScreen>}
      * */
     this._jsx_screens = {
-      "home": { element: Home(), head: 'О приложении', title: 'Экран информации о приложении' }
+      "home": { element: Home(), head: 'О приложении', title: 'Экран информации о приложении' },
+      "ip": { element: Ip(), head: 'Поиск по IP', title: 'Экран поиска гео-информации' },
+      "locations": { element: Locations(), head: 'Поиск по городу', title: 'Экран поиска списка метоположений' }
     };
     /**
      * Custom event raised when the current screen changes
@@ -65,10 +57,6 @@ export class Navigator extends HTMLElement {
      */
     //todo: wtf CustomEvent maybe pass routes screens
     this.screenChangedEvent = new CustomEvent('screenchanged', {
-      bubbles: true,
-      cancelable: false
-    });
-    this.screensLoadedEvent = new CustomEvent('screensloaded', {
       bubbles: true,
       cancelable: false
     });
@@ -87,26 +75,8 @@ export class Navigator extends HTMLElement {
    * @param {string} route The path of the screen to navigate to
    */
   jumpTo(route) {
-    if (this._animator.transitioning) {
-      return;
-    }
     if (this._route === route)
       return;
-
-    if (this._screens[route]) {
-      this._routePrevious = this._route;
-      this._route = route;
-      this.innerHTML = '';
-      this.appendChild(this.currentScreen.html);
-      if (this._routePrevious)
-        this._router.setRoute(route);
-      document.title = `${this.currentScreen.title}`;
-      this.dispatchEvent(this.screenChangedEvent);
-      this.currentScreen.dataBindExecute();
-      if (this._animator.animationReady) {
-        this._animator.endAnimation(this.querySelector('div'));
-      }
-    }
 
     if (this._jsx_screens[route]) {
       this._routePrevious = this._route;
@@ -115,7 +85,7 @@ export class Navigator extends HTMLElement {
       this.appendChild(this._jsx_screens[route].element);
       if (this._routePrevious)
         this._router.setRoute(route);
-      document.title = this.querySelectorAll("title")[0].innerText;
+      document.title = this._jsx_screens[route].title;
       this.dispatchEvent(this.screenChangedEvent);
     }
   }
@@ -137,10 +107,6 @@ export class Navigator extends HTMLElement {
   async attributeChangedCallback(attrName, oldVal, newVal) {
     if (attrName === 'start') {
       if (oldVal !== newVal) {
-        for (const scr of await loadScreens()) {
-          this._screens[scr.route] = scr;
-        }
-        this.dispatchEvent(this.screensLoadedEvent);
         let route = this._router.getRoute();
         if (route) {
           this.jumpTo(route);
@@ -150,23 +116,6 @@ export class Navigator extends HTMLElement {
         this._title = document.querySelectorAll('title')[0];
       }
     }
-  }
-
-
-  /**
-  * Current screen
-  * @returns {Screen} The current screen
-  */
-  get currentScreen() {
-    return this._screens ? this._screens[this._route] : null;
-  }
-
-  /**
-  * All known screens
-  * @returns {Object.<string,Screen>} Screens dictionary
-  */
-  get screens() {
-    return this._screens;
   }
 
   /**
