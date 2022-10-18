@@ -5,7 +5,7 @@ import { Location } from '../templates/location.js'
 export const Ip = (props) => (
   <div>
     <h1>Экран поиска гео-информации</h1>
-    <form onSubmit={ formSubmit }>
+    <form onSubmit={formSubmit} >
       <label>
         Ip:
         <input type="text" name='ip' placeholder='123.234.123.234' />
@@ -16,8 +16,14 @@ export const Ip = (props) => (
   </div>
 );
 
+export const checkIp = async function () {
+  let ip = new URLSearchParams(window.location.search).get('ip');
+  if (ip)
+    refreshState(ip);
+};
+
 /** @jsx createElement */
-export const Results = (props) => (
+const Results = (props) => (
   <div>
     <div><label>Результаты поиска по {props?.ip} IP:</label> </div>
     {props?.locations?.length > 0
@@ -41,13 +47,17 @@ async function formSubmit (event) {
     document.location.protocol + '//' + document.location.host +
     document.location.pathname + '?' + params.toString() + document.location.hash);
 
-  let results = await getData(this['ip'].value);
+  await refreshState(this['ip'].value);
+}
+
+async function refreshState(ip) {
+  let results = await getData(ip);
   const res = document.getElementById("ip-result");
   res.innerHTML = '';
   res.appendChild(Results(results));
 }
 
-export const getData = async function (ip) {
+async function getData(ip) {
   const state = {
     ip: ip,
     errors: [],

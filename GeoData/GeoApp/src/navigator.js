@@ -4,8 +4,8 @@
 
 import { createElement } from './component.js'
 import { Home } from './screens/home.js'
-import { Ip } from './screens/ip.js'
-import { Locations } from './screens/locations.js'
+import { Ip, checkIp } from './screens/ip.js'
+import { Locations, checkCity } from './screens/locations.js'
 import { Router } from './router.js'
 
 /**
@@ -13,6 +13,7 @@ import { Router } from './router.js'
  * @property {string} head head
  * @property {string} title title
  * @property {HTMLElement} element
+ * @property {Function} screenchanged screen cahnged event
  * */
 
 /**
@@ -47,9 +48,9 @@ export class Navigator extends HTMLElement {
      *  @type {Object.<string, JsxScreen>}
      * */
     this._jsx_screens = {
-      "home": { element: Home(), head: 'О приложении', title: 'Экран информации о приложении' },
-      "ip": { element: Ip(), head: 'Поиск по IP', title: 'Экран поиска гео-информации' },
-      "locations": { element: Locations(), head: 'Поиск по городу', title: 'Экран поиска списка метоположений' }
+      "home": { element: Home(), head: 'О приложении', title: 'Экран информации о приложении', screenchanged: null },
+      "ip": { element: Ip(), head: 'Поиск по IP', title: 'Экран поиска гео-информации', screenchanged: checkIp },
+      "locations": { element: Locations(), head: 'Поиск по городу', title: 'Экран поиска списка метоположений', screenchanged: null }
     };
     /**
      * Custom event raised when the current screen changes
@@ -86,6 +87,8 @@ export class Navigator extends HTMLElement {
       if (this._routePrevious)
         this._router.setRoute(route);
       document.title = this._jsx_screens[route].title;
+      if (this._jsx_screens[route].screenchanged)
+        this._jsx_screens[route].screenchanged();
       this.dispatchEvent(this.screenChangedEvent);
     }
   }

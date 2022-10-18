@@ -16,6 +16,12 @@ export const Locations = (props) => (
   </div>
 );
 
+export const checkCity = async function () {
+  let city = new URLSearchParams(window.location.search).get('city');
+  if (city)
+    refreshState(city);
+};
+
 //provide behaviour to a from
 async function formSubmit(event) {
   event.preventDefault();
@@ -26,7 +32,11 @@ async function formSubmit(event) {
     document.location.protocol + '//' + document.location.host +
     document.location.pathname + '?' + params.toString() + document.location.hash);
 
-  let results = await getData(this['city'].value);
+  await refreshState(this['city'].value);
+}
+
+async function refreshState(city) {
+  let results = await getData(ip);
   const res = document.getElementById("city-result");
   res.innerHTML = '';
   res.appendChild(Results(results));
