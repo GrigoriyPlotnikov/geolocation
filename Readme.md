@@ -124,6 +124,7 @@ Latency
  ████                                       ██
  █████                                      ██
 █████████████████████████ ████ ████████████████  █  █████ ████ █        █      █
+8.439 ms ===========================================================  428.365 ms
 ```
 ### Netling test of location controller
 Running 10s test with 1024 threads @ http://localhost:5000/ip/location?ip=116.226.107.115
