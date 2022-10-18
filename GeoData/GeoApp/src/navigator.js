@@ -50,7 +50,7 @@ export class Navigator extends HTMLElement {
     this._jsx_screens = {
       "home": { element: Home(), head: 'О приложении', title: 'Экран информации о приложении', screenchanged: null },
       "ip": { element: Ip(), head: 'Поиск по IP', title: 'Экран поиска гео-информации', screenchanged: checkIp },
-      "locations": { element: Locations(), head: 'Поиск по городу', title: 'Экран поиска списка метоположений', screenchanged: null }
+      "locations": { element: Locations(), head: 'Поиск по городу', title: 'Экран поиска списка метоположений', screenchanged: checkCity }
     };
     /**
      * Custom event raised when the current screen changes

@@ -17,9 +17,23 @@ export const Ip = (props) => (
 );
 
 export const checkIp = async function () {
-  let ip = new URLSearchParams(window.location.search).get('ip');
-  if (ip)
-    refreshState(ip);
+  //we might already have IP search stored in result
+  const ipInput = document.getElementsByName("ip")[0];
+  if (ipInput.value) {
+    let params = new URLSearchParams();
+    params.set('ip', ipInput.value);
+    history.replaceState({}, '',
+      document.location.protocol + '//' + document.location.host +
+      document.location.pathname + '?' + params.toString() + document.location.hash);
+  }
+  //we might have IP search shared by someone as  get request
+  else {
+    let ip = new URLSearchParams(window.location.search).get('ip');
+    if (ip) {
+      ipInput.value = ip;
+      refreshState(ip);
+    }
+  }
 };
 
 /** @jsx createElement */
@@ -46,7 +60,7 @@ async function formSubmit (event) {
   history.pushState({ 'ip': this['ip'].value }, '',
     document.location.protocol + '//' + document.location.host +
     document.location.pathname + '?' + params.toString() + document.location.hash);
-
+  //display results
   await refreshState(this['ip'].value);
 }
 

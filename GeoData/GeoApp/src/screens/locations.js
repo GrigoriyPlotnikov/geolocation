@@ -17,9 +17,23 @@ export const Locations = (props) => (
 );
 
 export const checkCity = async function () {
-  let city = new URLSearchParams(window.location.search).get('city');
-  if (city)
-    refreshState(city);
+  //we might already have search stored in result
+  const cityInput = document.getElementsByName("city")[0];
+  if (cityInput.value) {
+    let params = new URLSearchParams();
+    params.set('city', cityInput.value);
+    history.replaceState({}, '',
+      document.location.protocol + '//' + document.location.host +
+      document.location.pathname + '?' + params.toString() + document.location.hash);
+  }
+  //we might have search shared by someone as get request
+  else {
+    let city = new URLSearchParams(window.location.search).get('city');
+    if (city) {
+      cityInput.value = city;
+      refreshState(city);
+    }
+  }
 };
 
 //provide behaviour to a from
@@ -36,7 +50,7 @@ async function formSubmit(event) {
 }
 
 async function refreshState(city) {
-  let results = await getData(ip);
+  let results = await getData(city);
   const res = document.getElementById("city-result");
   res.innerHTML = '';
   res.appendChild(Results(results));
