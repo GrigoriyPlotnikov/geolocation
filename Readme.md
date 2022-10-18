@@ -15,8 +15,10 @@ Make a web app capable of returning user coords by IP and a list of places for g
 - Database load time should not differ from file reading time more than on 5 ms on data parsing, index creation and any other possible overheads.
 - The database must use fast binary search for both acquiring location by IP and list of places by city.
 - The app must expose two HTTP API methods:
+```
 	GET /ip/location?ip=123.234.123.234
 	GET /city/locations?city=cit_Gbqw4
+```
 - UI must be a SPA and must be made of two parts, a menu in left side and a screen on the right side.
 
 The complete [task description](https://www.metaquotes.net/ru/company/vacancies/tests/dot-net)
@@ -25,11 +27,11 @@ The complete [task description](https://www.metaquotes.net/ru/company/vacancies/
 - Main part is GeoData/GeoData.csproj, can be launched by "dotnet run" command
 - The Benchmarks folder contains database load test and results
 ```
-   |             Method |          Mean |        Error |        StdDev |   Allocated | Ratio | Ratio SD | Alloc Ratio |
-   |------------------- |--------------:|-------------:|--------------:|------------:|
-   |      ReadFileBytes |   6,483.61 us |   157.987 us |    465.828 us |    10938 KB | <<< baseline
-   |       ReadFileText |  93,778.67 us | 2,460.125 us |  6,978.965 us | 43567.99 KB |
-   |       ReadDatabase |   6,700.00 us |   174.500 us |    511.800 us |    10938 KB |  1.12 |     0.10 |        1.00 |
+ |             Method |          Mean |        Error |        StdDev |   Allocated | Ratio | Ratio SD | Alloc Ratio |
+ |------------------- |--------------:|-------------:|--------------:|------------:|
+ |      ReadFileBytes |   6,483.61 us |   157.987 us |    465.828 us |    10938 KB | <<< baseline
+ |       ReadFileText |  93,778.67 us | 2,460.125 us |  6,978.965 us | 43567.99 KB |
+ |       ReadDatabase |   6,700.00 us |   174.500 us |    511.800 us |    10938 KB |  1.12 |     0.10 |        1.00 |
 ```
 - UnitTests and IntegrationTests cover the main part of .NetCore app to an extent to make futher changes and tweaks easy
 - UI is in \GeoData\wwwroot folder, exposed to Kestrel server by   .UseDefaultFiles().UseStaticFiles() expression. Entry point is Index.html page that includes the js/app.js module. Webpack is yet to be attached to serve page UI in one request.
@@ -38,11 +40,11 @@ The complete [task description](https://www.metaquotes.net/ru/company/vacancies/
 ## The UI structure
 index.html sets up both web components for two-parts UI 
 ```
-	<screen-controls deck="main"> --- </screen-controls>
-	<screen-deck id="main" start="home">
-		<h1>Клиентская часть приложения. Выполнена в идеологии Single Page Application.</h1>
-		<h2>Идёт загрузка ...</h2>
-	</screen-deck>
+  <screen-controls deck="main"> --- </screen-controls>
+  <screen-deck id="main" start="home">
+    <h1>Клиентская часть приложения. Выполнена в идеологии Single Page Application.</h1>
+    <h2>Идёт загрузка ...</h2>
+  </screen-deck>
 ```	
 
 app.js includes components necessary to
@@ -73,8 +75,8 @@ In the HTML, the databinding for n1 is declared like this:
 ```
 In the script tag it is set up like this:
 ```
-	const n1 = this.observable(2);
-	this.n1 = n1;
+const n1 = this.observable(2);
+this.n1 = n1;
 ```
 The Screen class in screen.js is holds the information that represents a “screen” in the app. Main screen content is formed in the constructor, dataBindExecute in context is called by navigator when screen is displayed. Also, data bind is exposed in context to allow binding later, for example when form chages. 
 
@@ -90,7 +92,7 @@ The last module, also a web component, is the controls for the deck. The module 
 
 ## Load requrement
 The handling of 10 000 000 unique users per day (U) and 100 000 000 queries (Q) per day.
-According to the [techempower benchmarks]<https://www.techempower.com/benchmarks/#section=test&runid=8ca46892-e46c-4088-9443-05722ad6f7fb&hw=ph&test=plaintext> this  well within Kestel server capabilities (7 million per second!) so all blockers can be in controller code.
+According to the [techempower benchmarks] (https://www.techempower.com/benchmarks/#section=test&runid=8ca46892-e46c-4088-9443-05722ad6f7fb&hw=ph&test=plaintext) this  well within Kestel server capabilities (7 million per second!) so all blockers can be in controller code.
 
 Consider user session start is a complete load of html page incluing scripts and styles and a request to HTTP API methods. One improvement can be a Webpack to combine app.js in one file and minify it. Rest queries are pure API. 
 
@@ -102,7 +104,7 @@ The hourly users amount can be calculated as U users per day / 24 hrs per day ~ 
 Average requests can be 420K users per hour \* 10 requests / 3600 sec in hour ~ 1200 request per second. 
 
 ### Netling test of city controller
-Netling Running 10s test with 1024 threads @ http://localhost:5000/city/locations?city=cit_Erupedebefevy O
+Netling Running 10s test with 1024 threads @ (http://localhost:5000/city/locations?city=cit_Erupedebefevy O)
 
 ```
 39924 requests in 10.22s
