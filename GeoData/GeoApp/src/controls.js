@@ -51,6 +51,8 @@ export class Controls extends HTMLElement {
       this._controlRef[route] = anchor;
       anchor.addEventListener('click', (ev) => { ev.preventDefault(); this._deck.jumpTo(route) });
     });
+
+    this.refreshState();
   }
 
   /**
