@@ -1,36 +1,50 @@
 ﻿import { createElement } from '../component.js'
-import { Form } from '../templates/form.js'
 import { Location } from '../templates/location.js'
 
 /** @jsx createElement */
-export const Ip = (props, state) => (
+export const Ip = (props) => (
   <div>
     <h1>Экран поиска гео-информации</h1>
-    <Form onSubmit={formSubmit} label='Ip:' name='ip' placeholder="123.234.123.234" />
-    <div><label>Результаты поиска по {state?.ip} IP:</label> </div>
-    <div>{state?.locations.map(location => <Location {...location} />)}</div>
-    <div>{state?.errors.map(error => (<div> <label>Ошибка: <span name="error">{error}</span></label></div>))}</div>
+    <form onSubmit={ formSubmit }>
+      <label>
+        Ip:
+        <input type="text" name='ip' placeholder='123.234.123.234' />
+      </label>
+      <input type="submit" value="Искать" style="margin-left:8px" />
+    </form>
+    <div id="ip-result" />
+  </div>
+);
+
+/** @jsx createElement */
+export const Results = (props) => (
+  <div>
+    <div><label>Результаты поиска по {props?.ip} IP:</label> </div>
+    {props?.locations?.length > 0
+      ? <div>{props?.locations.map(location => <Location {...location} />)}</div>
+      : <div />
+    }
+    {props?.errors?.length > 0
+      ? <div>{props?.errors.map(error => (<div> <label>Ошибка: <span name="error">{error}</span></label></div>))}</div>
+      : <div />
+    }
   </div>
 );
 
 //provide behaviour to a from
 async function formSubmit (event) {
   event.preventDefault();
-  alert(this);
-  return;
-  ////replace the window link -- we are in next page
-  //let params = new URLSearchParams(window.location.search);
-  //params.set('ip', this['ip'].value);
-  //history.pushState({ 'ip': this['ip'].value }, '',
-  //  document.location.protocol + '//' + document.location.host +
-  //  document.location.pathname + '?' + params.toString() + document.location.hash);
-  ////provide values for observer
-  //state.ip.value = this['ip'].value;
-  //state.locations.length = 0;
-  //state.errors.length = 0;
-  //state.search = params.toString();
-  ////perform the request and see what is there
-  //getData(this['ip'].value, state);
+  //replace the window link -- we are in next page
+  let params = new URLSearchParams(window.location.search);
+  params.set('ip', this['ip'].value);
+  history.pushState({ 'ip': this['ip'].value }, '',
+    document.location.protocol + '//' + document.location.host +
+    document.location.pathname + '?' + params.toString() + document.location.hash);
+
+  let results = await getData(this['ip'].value);
+  const res = document.getElementById("ip-result");
+  res.innerHTML = '';
+  res.appendChild(Results(results));
 }
 
 export const getData = async function (ip) {

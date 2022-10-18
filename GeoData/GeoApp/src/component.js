@@ -16,7 +16,9 @@ export const createElement = (tag, props, ...children) => {
   const element = document.createElement(tag);
 
   Object.entries(props || {}).forEach(([name, value]) => {
-    if (name.startsWith("on") && name.toLowerCase() in window)
+    if (name === "className")
+      element.setAttribute('class', value.toString());
+    else if (name.startsWith("on") && name.toLowerCase() in window)
       element.addEventListener(name.toLowerCase().substr(2), value);
     else element.setAttribute(name, value.toString());
   });

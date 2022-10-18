@@ -94,7 +94,7 @@ The last module, also a web component, is the controls for the deck. The module 
 The handling of 10 000 000 unique users per day (U) and 100 000 000 queries (Q) per day.
 According to the [techempower benchmarks](https://www.techempower.com/benchmarks/#section=test&runid=8ca46892-e46c-4088-9443-05722ad6f7fb&hw=ph&test=plaintext) this  well within Kestel server capabilities (7 million per second!) so all blockers can be in controller code.
 
-Consider user session start is a complete load of html page incluing scripts and styles and a request to HTTP API methods. One improvement can be a Webpack to combine app.js in one file and minify it. Rest queries are pure API. 
+Consider user session start is a complete load of html page incluing scripts and styles and a request to HTTP API methods.
 
 The user performs about (Q / U) = 10 API queries per session. We dont have user reaction time, so we'l try to model it, consider it as something random from as fast as 500 ms to as long as 1 minute.
 Session length becomes 5 s to 10 minutes. Average session length ~5 min
